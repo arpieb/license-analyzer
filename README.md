@@ -1,5 +1,9 @@
 # Python License Analyzer
 
+[![CI](https://github.com/arpieb/license-analyzer/actions/workflows/ci.yml/badge.svg)](https://github.com/arpieb/license-analyzer/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 Scan Python dependencies for license information with multi-source detection, dependency tree visualization, compatibility checking, and policy enforcement.
 
 ## Installation
@@ -12,7 +16,7 @@ pip install license-analyzer
 uv add license-analyzer
 
 # From source (for development)
-git clone https://github.com/your-org/license-analyzer.git
+git clone https://github.com/arpieb/license-analyzer.git
 cd license-analyzer
 uv sync
 ```
@@ -292,7 +296,7 @@ license-analyzer matrix --format markdown --output compatibility-matrix.md
 
 ```bash
 # Clone and setup
-git clone https://github.com/your-org/license-analyzer.git
+git clone https://github.com/arpieb/license-analyzer.git
 cd license-analyzer
 uv sync
 
