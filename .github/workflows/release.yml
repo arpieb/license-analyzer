@@ -1,9 +1,17 @@
 name: Release
 
+# Disabled: Enable when ready to publish to PyPI
+# on:
+#   push:
+#     tags:
+#       - "v*"
+
 on:
-  push:
-    tags:
-      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (e.g., v0.1.0)'
+        required: true
 
 jobs:
   build:
