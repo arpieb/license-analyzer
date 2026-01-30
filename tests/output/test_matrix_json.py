@@ -1,4 +1,5 @@
 """Tests for JSON matrix formatter."""
+
 import json
 
 from license_analyzer.models.dependency import (

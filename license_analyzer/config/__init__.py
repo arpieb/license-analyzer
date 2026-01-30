@@ -1,4 +1,5 @@
 """Configuration handling for license-analyzer."""
+
 from __future__ import annotations
 
 from license_analyzer.config.defaults import DEFAULT_CONFIG_NAMES, get_default_config

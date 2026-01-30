@@ -1,4 +1,5 @@
 """Scanner module for dependency discovery and license resolution."""
+
 import asyncio
 from importlib.metadata import distributions
 from typing import Any, Optional

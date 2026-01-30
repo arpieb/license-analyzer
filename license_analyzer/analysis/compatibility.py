@@ -3,6 +3,7 @@
 Provides functions to check license compatibility using SPDX rules (FR13).
 Uses the license-expression library for accurate SPDX parsing and normalization.
 """
+
 from typing import Optional
 
 from license_expression import (  # type: ignore[import-untyped]

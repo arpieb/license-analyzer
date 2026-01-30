@@ -1,7 +1,8 @@
 """Package filtering for ignored packages configuration."""
+
 from __future__ import annotations
 
-from typing import List, NamedTuple
+from typing import NamedTuple
 
 from license_analyzer.models.config import AnalyzerConfig
 from license_analyzer.models.scan import PackageLicense
@@ -16,9 +17,9 @@ class FilterResult(NamedTuple):
         ignored_names: Names of packages that were ignored.
     """
 
-    packages: List[PackageLicense]
+    packages: list[PackageLicense]
     ignored_count: int
-    ignored_names: List[str]
+    ignored_names: list[str]
 
 
 def filter_ignored_packages(

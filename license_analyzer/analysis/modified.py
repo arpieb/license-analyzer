@@ -3,6 +3,7 @@
 Detects when LICENSE file content differs from known standard templates
 using fuzzy matching (difflib.SequenceMatcher).
 """
+
 import re
 from difflib import SequenceMatcher
 from typing import Optional

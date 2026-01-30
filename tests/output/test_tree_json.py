@@ -1,4 +1,5 @@
 """Tests for JSON tree output formatter."""
+
 import json
 
 from license_analyzer.models.dependency import (
@@ -82,9 +83,7 @@ class TestTreeJsonFormatterSummary:
         """Test summary includes total packages and depth."""
         formatter = TreeJsonFormatter()
 
-        child = DependencyNode(
-            name="urllib3", version="2.0.0", depth=1, license="MIT"
-        )
+        child = DependencyNode(name="urllib3", version="2.0.0", depth=1, license="MIT")
         root = DependencyNode(
             name="requests",
             version="2.31.0",
@@ -173,9 +172,7 @@ class TestTreeJsonFormatterProblematic:
         """Test problematic list is empty for permissive licenses."""
         formatter = TreeJsonFormatter()
 
-        root = DependencyNode(
-            name="mit-pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root = DependencyNode(name="mit-pkg", version="1.0.0", depth=0, license="MIT")
         tree = DependencyTree(roots=[root])
 
         result = formatter.format_dependency_tree(tree)
@@ -238,9 +235,7 @@ class TestTreeJsonFormatterLicenseCategories:
     def test_license_categories_present(self) -> None:
         """Test license_categories section is present in output."""
         formatter = TreeJsonFormatter()
-        root = DependencyNode(
-            name="pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root = DependencyNode(name="pkg", version="1.0.0", depth=0, license="MIT")
         tree = DependencyTree(roots=[root])
 
         result = formatter.format_dependency_tree(tree)
@@ -255,9 +250,7 @@ class TestTreeJsonFormatterLicenseCategories:
     def test_license_categories_structure(self) -> None:
         """Test each category has correct structure."""
         formatter = TreeJsonFormatter()
-        root = DependencyNode(
-            name="pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root = DependencyNode(name="pkg", version="1.0.0", depth=0, license="MIT")
         tree = DependencyTree(roots=[root])
 
         result = formatter.format_dependency_tree(tree)

@@ -1,4 +1,5 @@
 """Tests for modified license detection."""
+
 import pytest
 from pydantic import ValidationError
 
@@ -406,9 +407,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND."""
         assert result.similarity_score == 0.0
         assert "empty" in result.modifications[0].lower()
 
-    def test_whitespace_only_content(
-        self, detector: ModifiedLicenseDetector
-    ) -> None:
+    def test_whitespace_only_content(self, detector: ModifiedLicenseDetector) -> None:
         """Test whitespace-only content returns appropriate result."""
         result = detector.detect("   \n\n   ")
 

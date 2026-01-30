@@ -1,4 +1,5 @@
 """Terminal output formatter using Rich."""
+
 from typing import Optional
 
 from rich.console import Console
@@ -104,8 +105,7 @@ class TerminalFormatter:
         if result.has_issues:
             total_issues = result.issues_found + len(result.policy_violations)
             self._console.print(
-                f"[red]ISSUES FOUND[/red] - "
-                f"{total_issues} issue(s) require attention"
+                f"[red]ISSUES FOUND[/red] - {total_issues} issue(s) require attention"
             )
             # List packages with missing licenses
             for pkg in result.packages:
@@ -168,13 +168,14 @@ class TerminalFormatter:
             summary_lines.append(f"Policy Violations: {len(result.policy_violations)}")
 
         # Add ignored packages line if any were ignored (FR24)
-        if result.ignored_packages_summary and result.ignored_packages_summary.ignored_count > 0:
-            ignored = result.ignored_packages_summary
+        ignored = result.ignored_packages_summary
+        if ignored and ignored.ignored_count > 0:
             if ignored.ignored_names:
                 names_str = ", ".join(ignored.ignored_names[:3])
                 if len(ignored.ignored_names) > 3:
                     names_str += f", ... (+{len(ignored.ignored_names) - 3} more)"
-                summary_lines.append(f"Packages Ignored: {ignored.ignored_count} ({names_str})")
+                msg = f"Packages Ignored: {ignored.ignored_count} ({names_str})"
+                summary_lines.append(msg)
             else:
                 summary_lines.append(f"Packages Ignored: {ignored.ignored_count}")
 
@@ -183,11 +184,13 @@ class TerminalFormatter:
         if overrides_count > 0:
             summary_lines.append(f"Overrides Applied: {overrides_count}")
 
-        summary_lines.extend([
-            "",
-            f"Status: [{status_color}]{status}[/{status_color}]",
-            f"[{status_color}]{message}[/{status_color}]",
-        ])
+        summary_lines.extend(
+            [
+                "",
+                f"Status: [{status_color}]{status}[/{status_color}]",
+                f"[{status_color}]{message}[/{status_color}]",
+            ]
+        )
 
         panel = Panel(
             "\n".join(summary_lines),

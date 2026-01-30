@@ -1,4 +1,5 @@
 """Tests for terminal formatter."""
+
 from io import StringIO
 
 from rich.console import Console
@@ -179,9 +180,11 @@ class TestTerminalFormatterExecutiveSummary:
 
     def test_executive_summary_displayed(self) -> None:
         """Test executive summary panel is displayed."""
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         string_io = StringIO()
         console = Console(file=string_io, force_terminal=True, width=120)
@@ -194,9 +197,11 @@ class TestTerminalFormatterExecutiveSummary:
 
     def test_executive_summary_before_table(self) -> None:
         """Test executive summary appears before the packages table."""
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         string_io = StringIO()
         console = Console(file=string_io, force_terminal=True, width=120)
@@ -212,11 +217,13 @@ class TestTerminalFormatterExecutiveSummary:
 
     def test_executive_summary_metrics(self) -> None:
         """Test executive summary includes all metrics."""
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-            PackageLicense(name="requests", version="2.28.0", license="Apache-2.0"),
-            PackageLicense(name="unknown", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+                PackageLicense(name="requests", version="2.28.0", license="Apache-2.0"),
+                PackageLicense(name="unknown", version="1.0.0", license=None),
+            ]
+        )
 
         string_io = StringIO()
         console = Console(file=string_io, force_terminal=True, width=120)
@@ -235,9 +242,11 @@ class TestTerminalFormatterExecutiveSummary:
 
     def test_executive_summary_status_pass(self) -> None:
         """Test executive summary shows PASS status with green color."""
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         string_io = StringIO()
         console = Console(file=string_io, force_terminal=True, width=120)
@@ -251,10 +260,12 @@ class TestTerminalFormatterExecutiveSummary:
 
     def test_executive_summary_status_issues(self) -> None:
         """Test executive summary shows ISSUES FOUND status."""
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown1", version="1.0.0", license=None),
-            PackageLicense(name="unknown2", version="2.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown1", version="1.0.0", license=None),
+                PackageLicense(name="unknown2", version="2.0.0", license=None),
+            ]
+        )
 
         string_io = StringIO()
         console = Console(file=string_io, force_terminal=True, width=120)
@@ -285,11 +296,13 @@ class TestTerminalFormatterSorting:
 
     def test_packages_sorted_alphabetically(self) -> None:
         """Test packages are sorted alphabetically by name."""
-        result = ScanResult.from_packages([
-            PackageLicense(name="zlib", version="1.0.0", license="MIT"),
-            PackageLicense(name="aiohttp", version="3.0.0", license="Apache-2.0"),
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="zlib", version="1.0.0", license="MIT"),
+                PackageLicense(name="aiohttp", version="3.0.0", license="Apache-2.0"),
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         string_io = StringIO()
         console = Console(file=string_io, force_terminal=True, width=120)
@@ -313,9 +326,11 @@ class TestTerminalFormatterDisclaimer:
 
     def test_disclaimer_displayed(self) -> None:
         """Test disclaimer panel is displayed."""
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         string_io = StringIO()
         console = Console(file=string_io, force_terminal=True, width=120)
@@ -328,9 +343,11 @@ class TestTerminalFormatterDisclaimer:
 
     def test_disclaimer_after_executive_summary(self) -> None:
         """Test disclaimer appears after executive summary."""
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         string_io = StringIO()
         console = Console(file=string_io, force_terminal=True, width=120)
@@ -348,9 +365,11 @@ class TestTerminalFormatterDisclaimer:
 
     def test_disclaimer_contains_key_text(self) -> None:
         """Test disclaimer contains informational purpose text."""
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         string_io = StringIO()
         console = Console(file=string_io, force_terminal=True, width=120)

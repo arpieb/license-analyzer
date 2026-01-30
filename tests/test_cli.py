@@ -1,4 +1,5 @@
 """CLI behavior tests for license-analyzer."""
+
 from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
@@ -258,9 +259,7 @@ class TestExitCodes:
 
         assert result.exit_code == EXIT_ISSUES
 
-    def test_exit_code_2_on_resolve_licenses_error(
-        self, cli_runner: CliRunner
-    ) -> None:
+    def test_exit_code_2_on_resolve_licenses_error(self, cli_runner: CliRunner) -> None:
         """Test exit code 2 when resolve_licenses raises an error (AC #3)."""
         packages = [
             PackageLicense(name="click", version="8.1.0", license=None),
@@ -274,9 +273,7 @@ class TestExitCodes:
 
         assert result.exit_code == EXIT_ERROR
 
-    def test_configuration_error_message_displayed(
-        self, cli_runner: CliRunner
-    ) -> None:
+    def test_configuration_error_message_displayed(self, cli_runner: CliRunner) -> None:
         """Test that ConfigurationError shows clear error message (NFR14)."""
         with patch(
             "license_analyzer.cli.discover_packages",
@@ -318,15 +315,22 @@ class TestTreeCommand:
         )
         mock_tree = DependencyTree(roots=[root])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="requests", version="2.31.0", license=None)
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["tree"])
 
@@ -340,13 +344,16 @@ class TestTreeCommand:
         )
         mock_tree = DependencyTree(roots=[root])
 
-        with patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["tree", "click"])
 
@@ -359,15 +366,22 @@ class TestTreeCommand:
         )
         mock_tree = DependencyTree(roots=[root])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="requests", version="2.31.0", license=None)
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ) as mock_resolve, patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ) as mock_resolve,
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["tree", "--max-depth", "2"])
 
@@ -379,9 +393,7 @@ class TestTreeCommand:
 
     def test_tree_shows_summary(self, cli_runner: CliRunner) -> None:
         """Test that tree output shows summary statistics."""
-        child = DependencyNode(
-            name="urllib3", version="2.0.0", depth=1, license="MIT"
-        )
+        child = DependencyNode(name="urllib3", version="2.0.0", depth=1, license="MIT")
         root = DependencyNode(
             name="requests",
             version="2.31.0",
@@ -391,15 +403,22 @@ class TestTreeCommand:
         )
         mock_tree = DependencyTree(roots=[root])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="requests", version="2.31.0", license=None)
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["tree"])
 
@@ -415,15 +434,22 @@ class TestTreeCommand:
         )
         mock_tree = DependencyTree(roots=[root])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="gpl-pkg", version="1.0.0", license=None)
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="gpl-pkg", version="1.0.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["tree"])
 
@@ -438,15 +464,22 @@ class TestTreeCommand:
         )
         mock_tree = DependencyTree(roots=[root])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="click", version="8.1.0", license=None)
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="click", version="8.1.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["tree"])
 
@@ -482,15 +515,19 @@ class TestTreeCommand:
         assert result.exit_code == EXIT_ERROR
         assert "ScanError" in result.output
 
-    def test_tree_error_on_resolve_dependency_tree(
-        self, cli_runner: CliRunner
-    ) -> None:
+    def test_tree_error_on_resolve_dependency_tree(self, cli_runner: CliRunner) -> None:
         """Test tree handles resolve_dependency_tree errors gracefully."""
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="pkg", version="1.0.0", license=None)
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            side_effect=ScanError("Failed to resolve dependencies"),
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="pkg", version="1.0.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                side_effect=ScanError("Failed to resolve dependencies"),
+            ),
         ):
             result = cli_runner.invoke(main, ["tree"])
 
@@ -521,15 +558,22 @@ class TestTreeFormatOptions:
         )
         mock_tree = DependencyTree(roots=[root])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="requests", version="2.31.0", license=None)
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["tree", "--format", "json"])
 
@@ -546,15 +590,22 @@ class TestTreeFormatOptions:
         )
         mock_tree = DependencyTree(roots=[root])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="requests", version="2.31.0", license=None)
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["tree", "--format", "markdown"])
 
@@ -569,15 +620,22 @@ class TestTreeFormatOptions:
         )
         mock_tree = DependencyTree(roots=[root])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="requests", version="2.31.0", license=None)
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["tree"])
 
@@ -594,15 +652,22 @@ class TestTreeFormatOptions:
         )
         mock_tree = DependencyTree(roots=[root])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="requests", version="2.31.0", license=None)
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["tree", "--format", "JSON"])
 
@@ -625,15 +690,22 @@ class TestTreeFormatOptions:
         )
         mock_tree = DependencyTree(roots=[root])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="gpl-pkg", version="1.0.0", license=None)
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="gpl-pkg", version="1.0.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["tree", "--format", "json"])
 
@@ -659,15 +731,22 @@ class TestMatrixCommand:
         )
         mock_tree = DependencyTree(roots=[root])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="requests", version="2.31.0", license=None)
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["matrix"])
 
@@ -682,13 +761,16 @@ class TestMatrixCommand:
         )
         mock_tree = DependencyTree(roots=[root])
 
-        with patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["matrix", "click"])
 
@@ -701,15 +783,22 @@ class TestMatrixCommand:
         )
         mock_tree = DependencyTree(roots=[root])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="requests", version="2.31.0", license=None)
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ) as mock_resolve, patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ) as mock_resolve,
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["matrix", "--max-depth", "2"])
 
@@ -730,16 +819,23 @@ class TestMatrixCommand:
         )
         mock_tree = DependencyTree(roots=[root1, root2])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="gpl2-pkg", version="1.0.0", license=None),
-            PackageLicense(name="gpl3-pkg", version="1.0.0", license=None),
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="gpl2-pkg", version="1.0.0", license=None),
+                    PackageLicense(name="gpl3-pkg", version="1.0.0", license=None),
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["matrix"])
 
@@ -748,24 +844,29 @@ class TestMatrixCommand:
     def test_matrix_exit_code_0_when_compatible(self, cli_runner: CliRunner) -> None:
         """Test matrix returns exit code 0 when all licenses compatible."""
         # MIT and Apache-2.0 are compatible
-        root1 = DependencyNode(
-            name="mit-pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root1 = DependencyNode(name="mit-pkg", version="1.0.0", depth=0, license="MIT")
         root2 = DependencyNode(
             name="apache-pkg", version="1.0.0", depth=0, license="Apache-2.0"
         )
         mock_tree = DependencyTree(roots=[root1, root2])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="mit-pkg", version="1.0.0", license=None),
-            PackageLicense(name="apache-pkg", version="1.0.0", license=None),
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="mit-pkg", version="1.0.0", license=None),
+                    PackageLicense(name="apache-pkg", version="1.0.0", license=None),
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["matrix"])
 
@@ -794,15 +895,22 @@ class TestMatrixFormatOptions:
         )
         mock_tree = DependencyTree(roots=[root])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="requests", version="2.31.0", license=None)
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["matrix", "--format", "json"])
 
@@ -820,15 +928,22 @@ class TestMatrixFormatOptions:
         )
         mock_tree = DependencyTree(roots=[root])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="requests", version="2.31.0", license=None)
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["matrix", "--format", "markdown"])
 
@@ -843,15 +958,22 @@ class TestMatrixFormatOptions:
         )
         mock_tree = DependencyTree(roots=[root])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="requests", version="2.31.0", license=None)
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["matrix"])
 
@@ -866,9 +988,7 @@ class TestMatrixFormatOptions:
         assert result.exit_code != 0
         assert "Invalid value" in result.output
 
-    def test_matrix_json_exit_code_1_with_issues(
-        self, cli_runner: CliRunner
-    ) -> None:
+    def test_matrix_json_exit_code_1_with_issues(self, cli_runner: CliRunner) -> None:
         """Test matrix --format json still returns exit code 1 for issues."""
         # GPL-2.0 and GPL-3.0 are incompatible
         root1 = DependencyNode(
@@ -879,16 +999,23 @@ class TestMatrixFormatOptions:
         )
         mock_tree = DependencyTree(roots=[root1, root2])
 
-        with patch("license_analyzer.cli.discover_packages", return_value=[
-            PackageLicense(name="gpl2-pkg", version="1.0.0", license=None),
-            PackageLicense(name="gpl3-pkg", version="1.0.0", license=None),
-        ]), patch(
-            "license_analyzer.cli.resolve_dependency_tree",
-            return_value=mock_tree,
-        ), patch(
-            "license_analyzer.cli.attach_licenses_to_tree",
-            new_callable=AsyncMock,
-            return_value=mock_tree,
+        with (
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="gpl2-pkg", version="1.0.0", license=None),
+                    PackageLicense(name="gpl3-pkg", version="1.0.0", license=None),
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree",
+                return_value=mock_tree,
+            ),
+            patch(
+                "license_analyzer.cli.attach_licenses_to_tree",
+                new_callable=AsyncMock,
+                return_value=mock_tree,
+            ),
         ):
             result = cli_runner.invoke(main, ["matrix", "--format", "json"])
 
@@ -915,9 +1042,7 @@ class TestScanMarkdownFormat:
         assert result.exit_code in (EXIT_SUCCESS, EXIT_ISSUES)
         assert "# License Scan Report" in result.output
 
-    def test_scan_format_markdown_output_structure(
-        self, cli_runner: CliRunner
-    ) -> None:
+    def test_scan_format_markdown_output_structure(self, cli_runner: CliRunner) -> None:
         """Test scan --format markdown has correct structure."""
         packages = [
             PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
@@ -1094,6 +1219,7 @@ class TestScanJsonFormat:
         assert result.exit_code == EXIT_SUCCESS
         # Should be valid JSON
         import json
+
         data = json.loads(result.output)
         assert "scan_metadata" in data
         assert "summary" in data
@@ -1138,6 +1264,7 @@ class TestScanJsonFormat:
 
         assert result.exit_code == EXIT_ISSUES
         import json
+
         data = json.loads(result.output)
         assert data["summary"]["has_issues"] is True
         assert len(data["issues"]) == 1
@@ -1150,6 +1277,7 @@ class TestScanJsonFormat:
 
         assert result.exit_code == EXIT_SUCCESS
         import json
+
         data = json.loads(result.output)
         assert data["packages"] == []
         assert data["summary"]["total_packages"] == 0
@@ -1170,6 +1298,7 @@ class TestScanJsonFormat:
 
         assert result.exit_code == EXIT_SUCCESS
         import json
+
         data = json.loads(result.output)
         assert data["summary"]["status"] == "pass"
 
@@ -1189,6 +1318,7 @@ class TestScanJsonFormat:
 
         assert result.exit_code == EXIT_ISSUES
         import json
+
         data = json.loads(result.output)
         assert data["summary"]["status"] == "issues_found"
 
@@ -1217,6 +1347,7 @@ class TestScanJsonFormat:
 
         # Read back and parse (simulating CI/CD tool)
         import json
+
         with open(output_file) as f:
             data = json.load(f)
 
@@ -1230,9 +1361,7 @@ class TestScanJsonFormat:
 class TestExecutiveSummaryCLI:
     """Tests for executive summary in CLI outputs."""
 
-    def test_scan_terminal_shows_executive_summary(
-        self, cli_runner: CliRunner
-    ) -> None:
+    def test_scan_terminal_shows_executive_summary(self, cli_runner: CliRunner) -> None:
         """Test scan --format terminal shows executive summary."""
         packages = [
             PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
@@ -1296,9 +1425,7 @@ class TestExecutiveSummaryCLI:
         assert data["summary"]["overall_status"] == "PASS"
         assert data["summary"]["status_message"] == "All packages compatible"
 
-    def test_executive_summary_shows_issues_found(
-        self, cli_runner: CliRunner
-    ) -> None:
+    def test_executive_summary_shows_issues_found(self, cli_runner: CliRunner) -> None:
         """Test executive summary shows ISSUES FOUND when issues exist."""
         import json
 
@@ -1359,9 +1486,7 @@ class TestDisclaimerCLI:
         assert "NOT LEGAL ADVICE" in result.output
         assert "does not constitute legal advice" in result.output
 
-    def test_scan_json_has_disclaimer_in_metadata(
-        self, cli_runner: CliRunner
-    ) -> None:
+    def test_scan_json_has_disclaimer_in_metadata(self, cli_runner: CliRunner) -> None:
         """Test scan --format json has disclaimer in metadata."""
         import json
 
@@ -1562,9 +1687,7 @@ class TestScanOutputOption:
         # Verify content was overwritten
         assert "# License Scan Report" in output_file.read_text()
 
-    def test_scan_output_invalid_path_exit_code_2(
-        self, cli_runner: CliRunner
-    ) -> None:
+    def test_scan_output_invalid_path_exit_code_2(self, cli_runner: CliRunner) -> None:
         """Test scan --output with invalid path returns exit code 2."""
         packages = [
             PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
@@ -1578,7 +1701,13 @@ class TestScanOutputOption:
         ):
             result = cli_runner.invoke(
                 main,
-                ["scan", "--format", "markdown", "--output", "/nonexistent/dir/file.md"],
+                [
+                    "scan",
+                    "--format",
+                    "markdown",
+                    "--output",
+                    "/nonexistent/dir/file.md",
+                ],
             )
 
         assert result.exit_code == EXIT_ERROR
@@ -1625,10 +1754,15 @@ class TestTreeOutputOption:
         mock_tree = DependencyTree(roots=[root])
 
         with (
-            patch("license_analyzer.cli.discover_packages", return_value=[
-                PackageLicense(name="requests", version="2.31.0", license=None)
-            ]),
-            patch("license_analyzer.cli.resolve_dependency_tree", return_value=mock_tree),
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree", return_value=mock_tree
+            ),
             patch(
                 "license_analyzer.cli.attach_licenses_to_tree",
                 new_callable=AsyncMock,
@@ -1658,10 +1792,15 @@ class TestTreeOutputOption:
         mock_tree = DependencyTree(roots=[root])
 
         with (
-            patch("license_analyzer.cli.discover_packages", return_value=[
-                PackageLicense(name="requests", version="2.31.0", license=None)
-            ]),
-            patch("license_analyzer.cli.resolve_dependency_tree", return_value=mock_tree),
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree", return_value=mock_tree
+            ),
             patch(
                 "license_analyzer.cli.attach_licenses_to_tree",
                 new_callable=AsyncMock,
@@ -1693,10 +1832,15 @@ class TestMatrixOutputOption:
         mock_tree = DependencyTree(roots=[root])
 
         with (
-            patch("license_analyzer.cli.discover_packages", return_value=[
-                PackageLicense(name="requests", version="2.31.0", license=None)
-            ]),
-            patch("license_analyzer.cli.resolve_dependency_tree", return_value=mock_tree),
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree", return_value=mock_tree
+            ),
             patch(
                 "license_analyzer.cli.attach_licenses_to_tree",
                 new_callable=AsyncMock,
@@ -1726,10 +1870,15 @@ class TestMatrixOutputOption:
         mock_tree = DependencyTree(roots=[root])
 
         with (
-            patch("license_analyzer.cli.discover_packages", return_value=[
-                PackageLicense(name="requests", version="2.31.0", license=None)
-            ]),
-            patch("license_analyzer.cli.resolve_dependency_tree", return_value=mock_tree),
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
+            patch(
+                "license_analyzer.cli.resolve_dependency_tree", return_value=mock_tree
+            ),
             patch(
                 "license_analyzer.cli.attach_licenses_to_tree",
                 new_callable=AsyncMock,
@@ -1836,9 +1985,12 @@ class TestVerbosityOptions:
         mock_tree = DependencyTree(roots=[root])
 
         with (
-            patch("license_analyzer.cli.discover_packages", return_value=[
-                PackageLicense(name="requests", version="2.31.0", license=None)
-            ]),
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
             patch(
                 "license_analyzer.cli.resolve_dependency_tree", return_value=mock_tree
             ),
@@ -1861,9 +2013,12 @@ class TestVerbosityOptions:
         mock_tree = DependencyTree(roots=[root])
 
         with (
-            patch("license_analyzer.cli.discover_packages", return_value=[
-                PackageLicense(name="requests", version="2.31.0", license=None)
-            ]),
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
             patch(
                 "license_analyzer.cli.resolve_dependency_tree", return_value=mock_tree
             ),
@@ -1930,9 +2085,12 @@ class TestVerbosityOptions:
         mock_tree = DependencyTree(roots=[root])
 
         with (
-            patch("license_analyzer.cli.discover_packages", return_value=[
-                PackageLicense(name="requests", version="2.31.0", license=None)
-            ]),
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
             patch(
                 "license_analyzer.cli.resolve_dependency_tree", return_value=mock_tree
             ),
@@ -1955,9 +2113,12 @@ class TestVerbosityOptions:
         mock_tree = DependencyTree(roots=[root])
 
         with (
-            patch("license_analyzer.cli.discover_packages", return_value=[
-                PackageLicense(name="requests", version="2.31.0", license=None)
-            ]),
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
             patch(
                 "license_analyzer.cli.resolve_dependency_tree", return_value=mock_tree
             ),
@@ -1987,9 +2148,12 @@ class TestVerbosityOptions:
         mock_tree = DependencyTree(roots=[root])
 
         with (
-            patch("license_analyzer.cli.discover_packages", return_value=[
-                PackageLicense(name="requests", version="2.31.0", license=None)
-            ]),
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
             patch(
                 "license_analyzer.cli.resolve_dependency_tree", return_value=mock_tree
             ),
@@ -2025,10 +2189,13 @@ class TestVerbosityOptions:
         mock_tree = DependencyTree(roots=[root1, root2])
 
         with (
-            patch("license_analyzer.cli.discover_packages", return_value=[
-                PackageLicense(name="gpl2-pkg", version="1.0.0", license=None),
-                PackageLicense(name="gpl3-pkg", version="1.0.0", license=None),
-            ]),
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="gpl2-pkg", version="1.0.0", license=None),
+                    PackageLicense(name="gpl3-pkg", version="1.0.0", license=None),
+                ],
+            ),
             patch(
                 "license_analyzer.cli.resolve_dependency_tree", return_value=mock_tree
             ),
@@ -2055,9 +2222,7 @@ class TestVerbosityOptions:
 class TestConfigOption:
     """Tests for --config option on CLI commands."""
 
-    def test_scan_with_config_file(
-        self, cli_runner: CliRunner, tmp_path: Path
-    ) -> None:
+    def test_scan_with_config_file(self, cli_runner: CliRunner, tmp_path: Path) -> None:
         """Test that scan command accepts --config option with valid file."""
         config_file = tmp_path / "config.yaml"
         config_file.write_text("allowed_licenses:\n  - MIT\n")
@@ -2071,9 +2236,7 @@ class TestConfigOption:
             patch("license_analyzer.cli.discover_packages", return_value=packages),
             patch("license_analyzer.cli.resolve_licenses", mock_resolve),
         ):
-            result = cli_runner.invoke(
-                main, ["scan", "--config", str(config_file)]
-            )
+            result = cli_runner.invoke(main, ["scan", "--config", str(config_file)])
 
         # Should succeed - config was loaded
         assert result.exit_code in (EXIT_SUCCESS, EXIT_ISSUES)
@@ -2167,9 +2330,12 @@ class TestConfigOption:
         mock_tree = DependencyTree(roots=[root])
 
         with (
-            patch("license_analyzer.cli.discover_packages", return_value=[
-                PackageLicense(name="requests", version="2.31.0", license=None)
-            ]),
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
             patch(
                 "license_analyzer.cli.resolve_dependency_tree", return_value=mock_tree
             ),
@@ -2179,9 +2345,7 @@ class TestConfigOption:
                 return_value=mock_tree,
             ),
         ):
-            result = cli_runner.invoke(
-                main, ["tree", "--config", str(config_file)]
-            )
+            result = cli_runner.invoke(main, ["tree", "--config", str(config_file)])
 
         assert result.exit_code in (EXIT_SUCCESS, EXIT_ISSUES)
 
@@ -2198,9 +2362,12 @@ class TestConfigOption:
         mock_tree = DependencyTree(roots=[root])
 
         with (
-            patch("license_analyzer.cli.discover_packages", return_value=[
-                PackageLicense(name="requests", version="2.31.0", license=None)
-            ]),
+            patch(
+                "license_analyzer.cli.discover_packages",
+                return_value=[
+                    PackageLicense(name="requests", version="2.31.0", license=None)
+                ],
+            ),
             patch(
                 "license_analyzer.cli.resolve_dependency_tree", return_value=mock_tree
             ),
@@ -2210,9 +2377,7 @@ class TestConfigOption:
                 return_value=mock_tree,
             ),
         ):
-            result = cli_runner.invoke(
-                main, ["matrix", "--config", str(config_file)]
-            )
+            result = cli_runner.invoke(main, ["matrix", "--config", str(config_file)])
 
         assert result.exit_code in (EXIT_SUCCESS, EXIT_ISSUES)
 
@@ -2267,9 +2432,7 @@ class TestAllowedLicensesPolicy:
 
         assert result.exit_code == EXIT_SUCCESS
 
-    def test_scan_violation_exit_1(
-        self, cli_runner: CliRunner, tmp_path: Path
-    ) -> None:
+    def test_scan_violation_exit_1(self, cli_runner: CliRunner, tmp_path: Path) -> None:
         """Test exit code 1 when policy violations found."""
         config_file = tmp_path / ".license-analyzer.yaml"
         config_file.write_text("allowed_licenses:\n  - MIT\n")
@@ -2441,9 +2604,7 @@ class TestAllowedLicensesPolicy:
                 return_value=mock_packages,
             ),
         ):
-            result = cli_runner.invoke(
-                main, ["scan", "--config", str(config_file)]
-            )
+            result = cli_runner.invoke(main, ["scan", "--config", str(config_file)])
 
         # MIT not in allowed list (only Apache-2.0), so should fail
         assert result.exit_code == EXIT_ISSUES
@@ -2474,6 +2635,7 @@ class TestAllowedLicensesPolicy:
             result = cli_runner.invoke(main, ["scan", "--format", "json"])
 
         import json
+
         data = json.loads(result.output)
         assert len(data["policy_violations"]) == 2
 
@@ -2536,6 +2698,7 @@ class TestIgnoredPackagesCLI:
             result = cli_runner.invoke(main, ["scan", "--format", "json"])
 
         import json
+
         data = json.loads(result.output)
         # Should only have 1 package (click), not 2
         assert data["summary"]["total_packages"] == 1
@@ -2570,6 +2733,7 @@ class TestIgnoredPackagesCLI:
             result = cli_runner.invoke(main, ["scan", "--format", "json"])
 
         import json
+
         data = json.loads(result.output)
         assert data["summary"]["ignored_packages"] is not None
         assert data["summary"]["ignored_packages"]["count"] == 2
@@ -2624,6 +2788,7 @@ class TestIgnoredPackagesCLI:
             result = cli_runner.invoke(main, ["scan", "--format", "json"])
 
         import json
+
         data = json.loads(result.output)
         assert data["summary"]["ignored_packages"] is None
 
@@ -2653,6 +2818,7 @@ class TestIgnoredPackagesCLI:
             result = cli_runner.invoke(main, ["scan", "--format", "json"])
 
         import json
+
         data = json.loads(result.output)
         # No packages were actually ignored
         assert data["summary"]["ignored_packages"] is None
@@ -2693,6 +2859,7 @@ class TestLicenseOverridesCLI:
             result = cli_runner.invoke(main, ["scan", "--format", "json"])
 
         import json
+
         data = json.loads(result.output)
         assert data["packages"][0]["license"] == "Apache-2.0"
         assert data["packages"][0]["is_overridden"] is True
@@ -2703,17 +2870,16 @@ class TestLicenseOverridesCLI:
         """Test that original license is preserved in JSON output."""
         config_file = tmp_path / ".license-analyzer.yaml"
         config_file.write_text(
-            "overrides:\n"
-            "  requests:\n"
-            "    license: MIT\n"
-            "    reason: Corrected\n"
+            "overrides:\n  requests:\n    license: MIT\n    reason: Corrected\n"
         )
 
         packages = [
             PackageLicense(name="requests", version="2.28.0", license=None),
         ]
         resolved = [
-            PackageLicense(name="requests", version="2.28.0", license="Unknown-License"),
+            PackageLicense(
+                name="requests", version="2.28.0", license="Unknown-License"
+            ),
         ]
 
         with (
@@ -2728,6 +2894,7 @@ class TestLicenseOverridesCLI:
             result = cli_runner.invoke(main, ["scan", "--format", "json"])
 
         import json
+
         data = json.loads(result.output)
         assert data["packages"][0]["original_license"] == "Unknown-License"
         assert data["packages"][0]["override_reason"] == "Corrected"
@@ -2768,6 +2935,7 @@ class TestLicenseOverridesCLI:
             result = cli_runner.invoke(main, ["scan", "--format", "json"])
 
         import json
+
         data = json.loads(result.output)
         assert data["summary"]["overrides_applied"] == 2
 
@@ -2777,10 +2945,7 @@ class TestLicenseOverridesCLI:
         """Test that override info appears in terminal output."""
         config_file = tmp_path / ".license-analyzer.yaml"
         config_file.write_text(
-            "overrides:\n"
-            "  requests:\n"
-            "    license: MIT\n"
-            "    reason: Verified\n"
+            "overrides:\n  requests:\n    license: MIT\n    reason: Verified\n"
         )
 
         packages = [
@@ -2870,6 +3035,7 @@ class TestLicenseOverridesCLI:
             result = cli_runner.invoke(main, ["scan", "--format", "json"])
 
         import json
+
         data = json.loads(result.output)
         # GPL-3.0 should be flagged as policy violation
         assert data["summary"]["policy_violations_count"] == 1
@@ -2898,6 +3064,7 @@ class TestLicenseOverridesCLI:
             result = cli_runner.invoke(main, ["scan", "--format", "json"])
 
         import json
+
         data = json.loads(result.output)
         assert data["packages"][0]["original_license"] is None
         assert data["packages"][0]["override_reason"] is None

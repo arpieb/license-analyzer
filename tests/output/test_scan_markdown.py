@@ -1,4 +1,5 @@
 """Tests for Markdown scan result formatter."""
+
 from license_analyzer.constants import LEGAL_DISCLAIMER
 from license_analyzer.models.scan import (
     IgnoredPackagesSummary,
@@ -24,9 +25,11 @@ class TestScanMarkdownFormatter:
     def test_format_single_package(self) -> None:
         """Test formatting result with single package."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="Apache-2.0"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="Apache-2.0"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -37,10 +40,12 @@ class TestScanMarkdownFormatter:
     def test_format_multiple_packages(self) -> None:
         """Test formatting result with multiple packages."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-            PackageLicense(name="requests", version="2.28.0", license="Apache-2.0"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+                PackageLicense(name="requests", version="2.28.0", license="Apache-2.0"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -56,9 +61,11 @@ class TestScanMarkdownFormatterTitle:
     def test_title_present(self) -> None:
         """Test report has title."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -67,9 +74,11 @@ class TestScanMarkdownFormatterTitle:
     def test_timestamp_present(self) -> None:
         """Test report has timestamp."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -83,11 +92,13 @@ class TestScanMarkdownFormatterSummary:
     def test_summary_shows_total_packages(self) -> None:
         """Test summary shows total package count."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-            PackageLicense(name="requests", version="2.28.0", license="Apache-2.0"),
-            PackageLicense(name="httpx", version="0.24.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+                PackageLicense(name="requests", version="2.28.0", license="Apache-2.0"),
+                PackageLicense(name="httpx", version="0.24.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -97,10 +108,12 @@ class TestScanMarkdownFormatterSummary:
     def test_summary_shows_licenses_found(self) -> None:
         """Test summary shows licenses found count."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-            PackageLicense(name="unknown-pkg", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+                PackageLicense(name="unknown-pkg", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -110,10 +123,12 @@ class TestScanMarkdownFormatterSummary:
     def test_summary_shows_issues_count(self) -> None:
         """Test summary shows issues count."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-            PackageLicense(name="unknown-pkg", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+                PackageLicense(name="unknown-pkg", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -126,9 +141,11 @@ class TestScanMarkdownFormatterSummary:
     def test_status_badge_passing_when_no_issues(self) -> None:
         """Test status badge shows passing when no issues."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -139,9 +156,11 @@ class TestScanMarkdownFormatterSummary:
     def test_status_badge_failing_when_issues(self) -> None:
         """Test status badge shows failing when issues exist."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown-pkg", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown-pkg", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -156,9 +175,11 @@ class TestScanMarkdownFormatterPackages:
     def test_packages_table_has_headers(self) -> None:
         """Test packages table has proper headers."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -169,11 +190,13 @@ class TestScanMarkdownFormatterPackages:
     def test_packages_sorted_alphabetically(self) -> None:
         """Test packages are sorted alphabetically."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="zlib", version="1.0.0", license="MIT"),
-            PackageLicense(name="aiohttp", version="3.0.0", license="Apache-2.0"),
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="zlib", version="1.0.0", license="MIT"),
+                PackageLicense(name="aiohttp", version="3.0.0", license="Apache-2.0"),
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -187,9 +210,11 @@ class TestScanMarkdownFormatterPackages:
     def test_unknown_license_shows_warning_indicator(self) -> None:
         """Test packages with no license show warning indicator."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown-pkg", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown-pkg", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -198,9 +223,11 @@ class TestScanMarkdownFormatterPackages:
     def test_empty_string_license_shows_warning(self) -> None:
         """Test packages with empty string license show warning indicator."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="empty-license-pkg", version="1.0.0", license=""),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="empty-license-pkg", version="1.0.0", license=""),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -209,11 +236,13 @@ class TestScanMarkdownFormatterPackages:
     def test_packages_sorted_case_insensitive(self) -> None:
         """Test packages are sorted case-insensitively."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="Zlib", version="1.0.0", license="MIT"),
-            PackageLicense(name="aiohttp", version="3.0.0", license="Apache-2.0"),
-            PackageLicense(name="Requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="Zlib", version="1.0.0", license="MIT"),
+                PackageLicense(name="aiohttp", version="3.0.0", license="Apache-2.0"),
+                PackageLicense(name="Requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -231,10 +260,12 @@ class TestScanMarkdownFormatterIssues:
     def test_issues_section_absent_when_no_issues(self) -> None:
         """Test issues section is absent when all packages have licenses."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -243,9 +274,11 @@ class TestScanMarkdownFormatterIssues:
     def test_issues_section_present_when_issues(self) -> None:
         """Test issues section is present when packages have no license."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown-pkg", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown-pkg", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -254,9 +287,11 @@ class TestScanMarkdownFormatterIssues:
     def test_issues_include_package_details(self) -> None:
         """Test issues include package name and version."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown-pkg", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown-pkg", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -267,9 +302,11 @@ class TestScanMarkdownFormatterIssues:
     def test_issues_include_remediation(self) -> None:
         """Test issues include remediation suggestions."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown-pkg", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown-pkg", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -278,10 +315,12 @@ class TestScanMarkdownFormatterIssues:
     def test_issues_show_count(self) -> None:
         """Test issues section shows count of issues."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="pkg1", version="1.0.0", license=None),
-            PackageLicense(name="pkg2", version="2.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="pkg1", version="1.0.0", license=None),
+                PackageLicense(name="pkg2", version="2.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -290,9 +329,11 @@ class TestScanMarkdownFormatterIssues:
     def test_issues_positioned_after_summary(self) -> None:
         """Test issues section comes after summary but before packages."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown-pkg", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown-pkg", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -309,9 +350,11 @@ class TestScanMarkdownFormatterExecutiveSummary:
     def test_executive_summary_present(self) -> None:
         """Test executive summary section is present."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -320,9 +363,11 @@ class TestScanMarkdownFormatterExecutiveSummary:
     def test_executive_summary_after_title(self) -> None:
         """Test executive summary appears after title but before status badge."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -335,11 +380,13 @@ class TestScanMarkdownFormatterExecutiveSummary:
     def test_executive_summary_includes_total_packages(self) -> None:
         """Test executive summary shows total packages."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-            PackageLicense(name="httpx", version="0.24.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+                PackageLicense(name="httpx", version="0.24.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -354,10 +401,12 @@ class TestScanMarkdownFormatterExecutiveSummary:
     def test_executive_summary_includes_licenses_found(self) -> None:
         """Test executive summary shows licenses found."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-            PackageLicense(name="unknown", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+                PackageLicense(name="unknown", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -371,10 +420,12 @@ class TestScanMarkdownFormatterExecutiveSummary:
     def test_executive_summary_includes_issues_count(self) -> None:
         """Test executive summary shows issues count."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-            PackageLicense(name="unknown", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+                PackageLicense(name="unknown", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -387,9 +438,11 @@ class TestScanMarkdownFormatterExecutiveSummary:
     def test_executive_summary_status_pass(self) -> None:
         """Test executive summary shows PASS when no issues."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -403,10 +456,12 @@ class TestScanMarkdownFormatterExecutiveSummary:
     def test_executive_summary_status_issues_found(self) -> None:
         """Test executive summary shows ISSUES FOUND when issues exist."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown", version="1.0.0", license=None),
-            PackageLicense(name="another", version="2.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown", version="1.0.0", license=None),
+                PackageLicense(name="another", version="2.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -434,9 +489,11 @@ class TestScanMarkdownFormatterStructure:
     def test_report_structure_order(self) -> None:
         """Test report sections are in correct order."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -451,9 +508,11 @@ class TestScanMarkdownFormatterStructure:
     def test_report_is_valid_markdown(self) -> None:
         """Test report contains valid Markdown table syntax."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -471,9 +530,11 @@ class TestScanMarkdownFormatterDisclaimer:
     def test_disclaimer_present(self) -> None:
         """Test disclaimer section is present in output."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -482,9 +543,11 @@ class TestScanMarkdownFormatterDisclaimer:
     def test_disclaimer_after_executive_summary(self) -> None:
         """Test disclaimer appears after executive summary."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -496,9 +559,11 @@ class TestScanMarkdownFormatterDisclaimer:
     def test_disclaimer_before_status_badge(self) -> None:
         """Test disclaimer appears before status badge."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -510,9 +575,11 @@ class TestScanMarkdownFormatterDisclaimer:
     def test_disclaimer_contains_not_legal_advice(self) -> None:
         """Test disclaimer contains standard text about not being legal advice."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -521,9 +588,11 @@ class TestScanMarkdownFormatterDisclaimer:
     def test_disclaimer_has_warning_header(self) -> None:
         """Test disclaimer has blockquote format with header."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -532,9 +601,11 @@ class TestScanMarkdownFormatterDisclaimer:
     def test_disclaimer_matches_constant(self) -> None:
         """Test disclaimer content matches the LEGAL_DISCLAIMER constant."""
         formatter = ScanMarkdownFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 

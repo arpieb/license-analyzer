@@ -1,4 +1,5 @@
 """PyPI license resolver."""
+
 from typing import Any, Optional
 
 import httpx
@@ -13,12 +14,8 @@ CLASSIFIER_TO_SPDX: dict[str, str] = {
     "License :: OSI Approved :: MIT License": "MIT",
     "License :: OSI Approved :: Apache Software License": "Apache-2.0",
     "License :: OSI Approved :: BSD License": "BSD-3-Clause",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)": (
-        "GPL-3.0"
-    ),
-    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)": (
-        "GPL-2.0"
-    ),
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)": ("GPL-3.0"),
+    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)": ("GPL-2.0"),
     "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)": (
         "LGPL-3.0"
     ),

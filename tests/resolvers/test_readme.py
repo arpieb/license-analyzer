@@ -1,4 +1,5 @@
 """Tests for README license mention resolver."""
+
 from typing import Any
 from unittest.mock import AsyncMock, patch
 
@@ -19,19 +20,13 @@ class TestReadmeLicenseResolver:
     def pypi_metadata_with_github(self) -> dict[str, Any]:
         """PyPI metadata with GitHub repository URL."""
         return {
-            "info": {
-                "project_urls": {"Repository": "https://github.com/owner/repo"}
-            }
+            "info": {"project_urls": {"Repository": "https://github.com/owner/repo"}}
         }
 
     @pytest.fixture
     def pypi_metadata_with_source(self) -> dict[str, Any]:
         """PyPI metadata with Source URL."""
-        return {
-            "info": {
-                "project_urls": {"Source": "https://github.com/owner/repo"}
-            }
-        }
+        return {"info": {"project_urls": {"Source": "https://github.com/owner/repo"}}}
 
     @pytest.fixture
     def pypi_metadata_with_homepage(self) -> dict[str, Any]:
@@ -349,9 +344,7 @@ class TestReadmeLicenseResolver:
         resolver = ReadmeLicenseResolver(pypi_metadata=pypi_metadata_with_github)
         readme_content = "# My Package\n\nLicensed under the MIT License."
 
-        with patch.object(
-            resolver, "_fetch_readme_file", return_value=readme_content
-        ):
+        with patch.object(resolver, "_fetch_readme_file", return_value=readme_content):
             result = await resolver.resolve("example-pkg", "1.0.0")
 
         assert result == "MIT"

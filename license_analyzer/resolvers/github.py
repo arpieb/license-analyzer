@@ -1,4 +1,5 @@
 """GitHub LICENSE file resolver."""
+
 from typing import Any, Optional
 
 import httpx

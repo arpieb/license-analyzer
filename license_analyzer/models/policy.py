@@ -1,4 +1,5 @@
 """Policy-related Pydantic models for license-analyzer."""
+
 from __future__ import annotations
 
 from typing import Optional

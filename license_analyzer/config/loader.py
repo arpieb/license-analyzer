@@ -1,4 +1,5 @@
 """Configuration file discovery and loading for license-analyzer."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -46,9 +47,7 @@ def load_config_file(path: Path) -> AnalyzerConfig:
     try:
         content = path.read_text(encoding="utf-8")
     except (OSError, PermissionError) as e:
-        raise ConfigurationError(
-            f"Cannot read configuration file '{path}': {e}"
-        ) from e
+        raise ConfigurationError(f"Cannot read configuration file '{path}': {e}") from e
 
     # Handle empty files - return default config
     if not content.strip():
@@ -57,9 +56,7 @@ def load_config_file(path: Path) -> AnalyzerConfig:
     try:
         data = yaml.safe_load(content)
     except yaml.YAMLError as e:
-        raise ConfigurationError(
-            f"Invalid YAML syntax in '{path}': {e}"
-        ) from e
+        raise ConfigurationError(f"Invalid YAML syntax in '{path}': {e}") from e
 
     # Handle YAML that parses to None (empty or just comments)
     if data is None:

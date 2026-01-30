@@ -1,4 +1,5 @@
 """Tests for GitHub LICENSE file resolver."""
+
 from typing import Any
 from unittest.mock import AsyncMock, patch
 
@@ -19,19 +20,13 @@ class TestGitHubLicenseResolver:
     def pypi_metadata_with_github(self) -> dict[str, Any]:
         """PyPI metadata with GitHub repository URL."""
         return {
-            "info": {
-                "project_urls": {"Repository": "https://github.com/owner/repo"}
-            }
+            "info": {"project_urls": {"Repository": "https://github.com/owner/repo"}}
         }
 
     @pytest.fixture
     def pypi_metadata_with_source(self) -> dict[str, Any]:
         """PyPI metadata with Source URL."""
-        return {
-            "info": {
-                "project_urls": {"Source": "https://github.com/owner/repo"}
-            }
-        }
+        return {"info": {"project_urls": {"Source": "https://github.com/owner/repo"}}}
 
     @pytest.fixture
     def pypi_metadata_with_homepage(self) -> dict[str, Any]:
@@ -476,7 +471,5 @@ modification, are permitted provided that the following conditions are met:
 
     def test_modification_result_property_initially_none(self) -> None:
         """Test modification_result is None before resolve is called."""
-        resolver = GitHubLicenseResolver(
-            pypi_metadata=None, detect_modified=True
-        )
+        resolver = GitHubLicenseResolver(pypi_metadata=None, detect_modified=True)
         assert resolver.modification_result is None

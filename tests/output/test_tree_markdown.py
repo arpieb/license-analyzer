@@ -1,4 +1,5 @@
 """Tests for Markdown tree output formatter."""
+
 from license_analyzer.models.dependency import (
     CircularReference,
     DependencyNode,
@@ -77,9 +78,7 @@ class TestTreeMarkdownFormatter:
         root2 = DependencyNode(
             name="click", version="8.1.0", depth=0, license="BSD-3-Clause"
         )
-        root3 = DependencyNode(
-            name="pydantic", version="2.0.0", depth=0, license="MIT"
-        )
+        root3 = DependencyNode(name="pydantic", version="2.0.0", depth=0, license="MIT")
         tree = DependencyTree(roots=[root1, root2, root3])
 
         result = formatter.format_dependency_tree(tree)
@@ -114,9 +113,7 @@ class TestTreeMarkdownFormatterSummary:
     def test_summary_shows_passing_badge_for_clean(self) -> None:
         """Test passing status badge for no problematic licenses."""
         formatter = TreeMarkdownFormatter()
-        root = DependencyNode(
-            name="mit-pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root = DependencyNode(name="mit-pkg", version="1.0.0", depth=0, license="MIT")
         tree = DependencyTree(roots=[root])
 
         result = formatter.format_dependency_tree(tree)
@@ -169,9 +166,7 @@ class TestTreeMarkdownFormatterProblematic:
     def test_problematic_section_absent_when_clean(self) -> None:
         """Test no problematic section for permissive licenses."""
         formatter = TreeMarkdownFormatter()
-        root = DependencyNode(
-            name="mit-pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root = DependencyNode(name="mit-pkg", version="1.0.0", depth=0, license="MIT")
         tree = DependencyTree(roots=[root])
 
         result = formatter.format_dependency_tree(tree)
@@ -219,9 +214,7 @@ class TestTreeMarkdownFormatterCircular:
     def test_circular_section_absent_when_none(self) -> None:
         """Test no circular section when no circular deps."""
         formatter = TreeMarkdownFormatter()
-        root = DependencyNode(
-            name="pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root = DependencyNode(name="pkg", version="1.0.0", depth=0, license="MIT")
         tree = DependencyTree(roots=[root])
 
         result = formatter.format_dependency_tree(tree)
@@ -263,9 +256,7 @@ class TestTreeMarkdownFormatterWarnings:
     def test_no_warning_for_permissive(self) -> None:
         """Test no warning for permissive licenses."""
         formatter = TreeMarkdownFormatter()
-        root = DependencyNode(
-            name="mit-pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root = DependencyNode(name="mit-pkg", version="1.0.0", depth=0, license="MIT")
         tree = DependencyTree(roots=[root])
 
         result = formatter.format_dependency_tree(tree)
@@ -282,9 +273,7 @@ class TestTreeMarkdownFormatterLicenseCategories:
     def test_license_categories_section_present(self) -> None:
         """Test license categories section is present in output."""
         formatter = TreeMarkdownFormatter()
-        root = DependencyNode(
-            name="pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root = DependencyNode(name="pkg", version="1.0.0", depth=0, license="MIT")
         tree = DependencyTree(roots=[root])
 
         result = formatter.format_dependency_tree(tree)
@@ -294,9 +283,7 @@ class TestTreeMarkdownFormatterLicenseCategories:
     def test_license_categories_table_format(self) -> None:
         """Test license categories use table format."""
         formatter = TreeMarkdownFormatter()
-        root = DependencyNode(
-            name="pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root = DependencyNode(name="pkg", version="1.0.0", depth=0, license="MIT")
         tree = DependencyTree(roots=[root])
 
         result = formatter.format_dependency_tree(tree)
@@ -347,14 +334,17 @@ class TestTreeMarkdownFormatterLicenseCategories:
         # Create nodes with many permissive licenses (>5 to trigger truncation)
         nodes = []
         licenses = [
-            "MIT", "Apache-2.0", "BSD-3-Clause", "ISC",
-            "BSD-2-Clause", "Unlicense", "CC0-1.0"
+            "MIT",
+            "Apache-2.0",
+            "BSD-3-Clause",
+            "ISC",
+            "BSD-2-Clause",
+            "Unlicense",
+            "CC0-1.0",
         ]
         for i, lic in enumerate(licenses):
             nodes.append(
-                DependencyNode(
-                    name=f"pkg-{i}", version="1.0.0", depth=0, license=lic
-                )
+                DependencyNode(name=f"pkg-{i}", version="1.0.0", depth=0, license=lic)
             )
         tree = DependencyTree(roots=nodes)
 

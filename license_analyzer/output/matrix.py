@@ -1,4 +1,5 @@
 """Terminal matrix formatter for license compatibility visualization."""
+
 from typing import Optional
 
 from rich.console import Console
@@ -104,7 +105,8 @@ class MatrixFormatter:
             return
 
         incompatible_count = sum(
-            1 for issue in matrix.issues
+            1
+            for issue in matrix.issues
             if issue.status == CompatibilityStatus.INCOMPATIBLE
         )
 
@@ -115,9 +117,7 @@ class MatrixFormatter:
             # List incompatible pairs
             for issue in matrix.issues:
                 if issue.status == CompatibilityStatus.INCOMPATIBLE:
-                    self._console.print(
-                        f"  - {issue.license_a} + {issue.license_b}"
-                    )
+                    self._console.print(f"  - {issue.license_a} + {issue.license_b}")
         else:
             self._console.print(
                 f"[green]COMPATIBLE[/green] - {matrix.size} licenses checked"
@@ -155,12 +155,12 @@ class MatrixFormatter:
         self._console.print(f"[bold]Total licenses:[/bold] {matrix.size}")
 
         incompatible_count = sum(
-            1 for issue in matrix.issues
+            1
+            for issue in matrix.issues
             if issue.status == CompatibilityStatus.INCOMPATIBLE
         )
         unknown_count = sum(
-            1 for issue in matrix.issues
-            if issue.status == CompatibilityStatus.UNKNOWN
+            1 for issue in matrix.issues if issue.status == CompatibilityStatus.UNKNOWN
         )
 
         if incompatible_count > 0:

@@ -1,4 +1,5 @@
 """Tests for dependency resolver."""
+
 from typing import Optional
 from unittest.mock import patch
 
@@ -32,7 +33,9 @@ class MockDistribution:
         return self._requires
 
 
-def create_mock_distributions(packages: dict[str, tuple[str, Optional[list[str]]]]) -> list[MockDistribution]:
+def create_mock_distributions(
+    packages: dict[str, tuple[str, Optional[list[str]]]],
+) -> list[MockDistribution]:
     """Create list of mock distributions.
 
     Args:
@@ -75,12 +78,17 @@ class TestDependencyResolverInit:
 
     def test_builds_installed_index(self) -> None:
         """Test that resolver builds package index on init."""
-        mock_dists = create_mock_distributions({
-            "requests": ("2.31.0", None),
-            "flask": ("2.0.0", None),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "requests": ("2.31.0", None),
+                "flask": ("2.0.0", None),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
 
             assert "requests" in resolver._installed
@@ -88,11 +96,16 @@ class TestDependencyResolverInit:
 
     def test_normalizes_package_names_in_index(self) -> None:
         """Test that package names are normalized in index."""
-        mock_dists = create_mock_distributions({
-            "Flask-RESTful": ("0.3.9", None),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "Flask-RESTful": ("0.3.9", None),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
 
             assert "flask_restful" in resolver._installed
@@ -104,11 +117,16 @@ class TestDependencyResolverResolveTree:
 
     def test_resolve_single_package_no_deps(self) -> None:
         """Test resolving a single package with no dependencies."""
-        mock_dists = create_mock_distributions({
-            "requests": ("2.31.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "requests": ("2.31.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["requests"])
 
@@ -120,13 +138,18 @@ class TestDependencyResolverResolveTree:
 
     def test_resolve_package_with_direct_deps(self) -> None:
         """Test resolving package with direct dependencies."""
-        mock_dists = create_mock_distributions({
-            "requests": ("2.31.0", ["certifi>=2017.4.17", "urllib3>=1.21.1"]),
-            "certifi": ("2023.7.22", []),
-            "urllib3": ("2.0.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "requests": ("2.31.0", ["certifi>=2017.4.17", "urllib3>=1.21.1"]),
+                "certifi": ("2023.7.22", []),
+                "urllib3": ("2.0.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["requests"])
 
@@ -145,13 +168,18 @@ class TestDependencyResolverResolveTree:
 
     def test_resolve_transitive_deps(self) -> None:
         """Test resolving transitive dependencies."""
-        mock_dists = create_mock_distributions({
-            "requests": ("2.31.0", ["urllib3>=1.21.1"]),
-            "urllib3": ("2.0.0", ["idna>=2.0.0"]),
-            "idna": ("3.4", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "requests": ("2.31.0", ["urllib3>=1.21.1"]),
+                "urllib3": ("2.0.0", ["idna>=2.0.0"]),
+                "idna": ("3.4", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["requests"])
 
@@ -172,12 +200,17 @@ class TestDependencyResolverResolveTree:
 
     def test_resolve_multiple_roots(self) -> None:
         """Test resolving multiple root packages."""
-        mock_dists = create_mock_distributions({
-            "requests": ("2.31.0", []),
-            "click": ("8.1.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "requests": ("2.31.0", []),
+                "click": ("8.1.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["requests", "click"])
 
@@ -188,11 +221,16 @@ class TestDependencyResolverResolveTree:
 
     def test_resolve_skips_nonexistent_packages(self) -> None:
         """Test that nonexistent packages are skipped."""
-        mock_dists = create_mock_distributions({
-            "requests": ("2.31.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "requests": ("2.31.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["requests", "nonexistent"])
 
@@ -206,14 +244,19 @@ class TestDependencyResolverResolveTree:
         B -> D
         C -> D (same package!)
         """
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0", "C>=1.0"]),
-            "B": ("1.0.0", ["D>=1.0"]),
-            "C": ("1.0.0", ["D>=1.0"]),
-            "D": ("1.0.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0", "C>=1.0"]),
+                "B": ("1.0.0", ["D>=1.0"]),
+                "C": ("1.0.0", ["D>=1.0"]),
+                "D": ("1.0.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["A"])
 
@@ -224,14 +267,19 @@ class TestDependencyResolverResolveTree:
 
     def test_resolve_with_max_depth(self) -> None:
         """Test max_depth limits tree traversal."""
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0"]),
-            "B": ("1.0.0", ["C>=1.0"]),
-            "C": ("1.0.0", ["D>=1.0"]),
-            "D": ("1.0.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0"]),
+                "B": ("1.0.0", ["C>=1.0"]),
+                "C": ("1.0.0", ["D>=1.0"]),
+                "D": ("1.0.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
 
             # Depth 1: A and B only
@@ -245,12 +293,17 @@ class TestDependencyResolverResolveTree:
 
     def test_resolve_max_depth_zero_returns_root_only(self) -> None:
         """Test max_depth=0 returns only root packages."""
-        mock_dists = create_mock_distributions({
-            "requests": ("2.31.0", ["certifi>=2017.4.17"]),
-            "certifi": ("2023.7.22", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "requests": ("2.31.0", ["certifi>=2017.4.17"]),
+                "certifi": ("2023.7.22", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["requests"], max_depth=0)
 
@@ -264,15 +317,23 @@ class TestDependencyResolverMarkerHandling:
 
     def test_skips_requirements_with_failing_markers(self) -> None:
         """Test that requirements with non-matching markers are skipped."""
-        mock_dists = create_mock_distributions({
-            "requests": ("2.31.0", [
-                "certifi>=2017.4.17",
-                'win32api; sys_platform == "win32"',  # Will be skipped on non-Windows
-            ]),
-            "certifi": ("2023.7.22", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "requests": (
+                    "2.31.0",
+                    [
+                        "certifi>=2017.4.17",
+                        'win32api; sys_platform == "win32"',  # Will be skipped on non-Windows
+                    ],
+                ),
+                "certifi": ("2023.7.22", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["requests"])
 
@@ -282,16 +343,24 @@ class TestDependencyResolverMarkerHandling:
 
     def test_skips_extras_only_requirements(self) -> None:
         """Test that extras-only requirements are skipped."""
-        mock_dists = create_mock_distributions({
-            "requests": ("2.31.0", [
-                "certifi>=2017.4.17",
-                'pytest; extra == "test"',  # Extras-only, should be skipped
-            ]),
-            "certifi": ("2023.7.22", []),
-            "pytest": ("7.0.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "requests": (
+                    "2.31.0",
+                    [
+                        "certifi>=2017.4.17",
+                        'pytest; extra == "test"',  # Extras-only, should be skipped
+                    ],
+                ),
+                "certifi": ("2023.7.22", []),
+                "pytest": ("7.0.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["requests"])
 
@@ -305,13 +374,18 @@ class TestDependencyResolverGetInstalledPackages:
 
     def test_returns_sorted_package_names(self) -> None:
         """Test that installed packages are returned sorted."""
-        mock_dists = create_mock_distributions({
-            "zebra": ("1.0.0", None),
-            "apple": ("1.0.0", None),
-            "mango": ("1.0.0", None),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "zebra": ("1.0.0", None),
+                "apple": ("1.0.0", None),
+                "mango": ("1.0.0", None),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             packages = resolver.get_installed_packages()
 
@@ -323,15 +397,23 @@ class TestDependencyResolverEdgeCases:
 
     def test_handles_malformed_requirement(self) -> None:
         """Test that malformed requirements are skipped gracefully."""
-        mock_dists = create_mock_distributions({
-            "requests": ("2.31.0", [
-                "certifi>=2017.4.17",
-                "malformed[[[requirement",  # Invalid syntax
-            ]),
-            "certifi": ("2023.7.22", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "requests": (
+                    "2.31.0",
+                    [
+                        "certifi>=2017.4.17",
+                        "malformed[[[requirement",  # Invalid syntax
+                    ],
+                ),
+                "certifi": ("2023.7.22", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             # Should not raise, should skip malformed requirement
             tree = resolver.resolve_tree(["requests"])
@@ -344,7 +426,10 @@ class TestDependencyResolverEdgeCases:
         """Test handling of packages with None requires."""
         mock_dist = MockDistribution("requests", "2.31.0", None)
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=[mock_dist]):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=[mock_dist],
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["requests"])
 
@@ -353,11 +438,16 @@ class TestDependencyResolverEdgeCases:
 
     def test_handles_empty_root_list(self) -> None:
         """Test resolving with empty root package list."""
-        mock_dists = create_mock_distributions({
-            "requests": ("2.31.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "requests": ("2.31.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree([])
 
@@ -366,11 +456,16 @@ class TestDependencyResolverEdgeCases:
 
     def test_license_field_is_none_by_default(self) -> None:
         """Test that license field is None (populated later)."""
-        mock_dists = create_mock_distributions({
-            "requests": ("2.31.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "requests": ("2.31.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["requests"])
 
@@ -396,7 +491,11 @@ class TestDependencyResolverPerformance:
             # Create some chains to simulate transitive deps
             if i < root_count:
                 # First 50 are root packages with 4 deps each
-                deps = [f"pkg_{i*4 + j + root_count}>=1.0" for j in range(4) if i*4 + j + root_count < total_packages]
+                deps = [
+                    f"pkg_{i * 4 + j + root_count}>=1.0"
+                    for j in range(4)
+                    if i * 4 + j + root_count < total_packages
+                ]
                 packages[f"pkg_{i}"] = ("1.0.0", deps if deps else [])
             else:
                 # Rest are leaf packages
@@ -404,7 +503,10 @@ class TestDependencyResolverPerformance:
 
         mock_dists = create_mock_distributions(packages)
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
 
             start = time.time()
@@ -416,7 +518,9 @@ class TestDependencyResolverPerformance:
 
             # Verify we got reasonable number of nodes (at least root_count)
             all_nodes = tree.get_all_nodes()
-            assert len(all_nodes) >= root_count, f"Expected at least {root_count} nodes, got {len(all_nodes)}"
+            assert len(all_nodes) >= root_count, (
+                f"Expected at least {root_count} nodes, got {len(all_nodes)}"
+            )
 
     def test_diamond_pattern_efficient(self) -> None:
         """Test that diamond dependencies are processed only once."""
@@ -430,23 +534,33 @@ class TestDependencyResolverPerformance:
 
         mock_dists = create_mock_distributions(packages)
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree([f"pkg_{i}" for i in range(100)])
 
             # "shared" should appear only once in the tree (visited tracking)
             all_nodes = tree.get_all_nodes()
             shared_count = sum(1 for n in all_nodes if n.name == "shared")
-            assert shared_count == 1, f"Expected shared to appear once, found {shared_count}"
+            assert shared_count == 1, (
+                f"Expected shared to appear once, found {shared_count}"
+            )
 
     def test_package_index_built_once(self) -> None:
         """Test that package index is built once at resolver init."""
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0"]),
-            "B": ("1.0.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0"]),
+                "B": ("1.0.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists) as mock_dist:
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ) as mock_dist:
             resolver = DependencyResolver()
 
             # distributions() called once during init
@@ -466,11 +580,16 @@ class TestDependencyResolverDepthTracking:
 
     def test_root_has_depth_zero(self) -> None:
         """Test that root packages have depth 0."""
-        mock_dists = create_mock_distributions({
-            "requests": ("2.31.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "requests": ("2.31.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["requests"])
 
@@ -479,12 +598,17 @@ class TestDependencyResolverDepthTracking:
 
     def test_direct_deps_have_depth_one(self) -> None:
         """Test that direct dependencies have depth 1."""
-        mock_dists = create_mock_distributions({
-            "requests": ("2.31.0", ["certifi>=2017.4.17"]),
-            "certifi": ("2023.7.22", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "requests": ("2.31.0", ["certifi>=2017.4.17"]),
+                "certifi": ("2023.7.22", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["requests"])
 
@@ -494,14 +618,19 @@ class TestDependencyResolverDepthTracking:
 
     def test_depth_increments_through_chain(self) -> None:
         """Test that depth increments through dependency chain."""
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0"]),
-            "B": ("1.0.0", ["C>=1.0"]),
-            "C": ("1.0.0", ["D>=1.0"]),
-            "D": ("1.0.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0"]),
+                "B": ("1.0.0", ["C>=1.0"]),
+                "C": ("1.0.0", ["D>=1.0"]),
+                "D": ("1.0.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["A"])
 
@@ -519,14 +648,19 @@ class TestDependencyResolverDepthTracking:
 
     def test_get_nodes_at_depth(self) -> None:
         """Test filtering nodes by depth."""
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0", "C>=1.0"]),
-            "B": ("1.0.0", ["D>=1.0"]),
-            "C": ("1.0.0", []),
-            "D": ("1.0.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0", "C>=1.0"]),
+                "B": ("1.0.0", ["D>=1.0"]),
+                "C": ("1.0.0", []),
+                "D": ("1.0.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["A"])
 
@@ -546,13 +680,18 @@ class TestDependencyResolverDepthTracking:
 
     def test_max_depth_property(self) -> None:
         """Test max_depth computed property."""
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0"]),
-            "B": ("1.0.0", ["C>=1.0"]),
-            "C": ("1.0.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0"]),
+                "B": ("1.0.0", ["C>=1.0"]),
+                "C": ("1.0.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["A"])
 
@@ -564,12 +703,17 @@ class TestCircularDependencyHandling:
 
     def test_simple_circular_a_b_a(self) -> None:
         """Test A→B→A circular pattern is detected."""
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0"]),
-            "B": ("1.0.0", ["A>=1.0"]),  # Circular back to A
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0"]),
+                "B": ("1.0.0", ["A>=1.0"]),  # Circular back to A
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["A"])
 
@@ -584,13 +728,18 @@ class TestCircularDependencyHandling:
 
     def test_multi_node_circular_a_b_c_a(self) -> None:
         """Test A→B→C→A circular pattern."""
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0"]),
-            "B": ("1.0.0", ["C>=1.0"]),
-            "C": ("1.0.0", ["A>=1.0"]),  # Circular back to A
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0"]),
+                "B": ("1.0.0", ["C>=1.0"]),
+                "C": ("1.0.0", ["A>=1.0"]),  # Circular back to A
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["A"])
 
@@ -603,12 +752,17 @@ class TestCircularDependencyHandling:
 
     def test_each_package_processed_once(self) -> None:
         """Test that packages in circular refs are only processed once."""
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0"]),
-            "B": ("1.0.0", ["A>=1.0"]),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0"]),
+                "B": ("1.0.0", ["A>=1.0"]),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["A"])
 
@@ -623,13 +777,18 @@ class TestCircularDependencyHandling:
         """Test that circular dependencies complete within timeout."""
         import time
 
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0"]),
-            "B": ("1.0.0", ["C>=1.0"]),
-            "C": ("1.0.0", ["A>=1.0"]),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0"]),
+                "B": ("1.0.0", ["C>=1.0"]),
+                "C": ("1.0.0", ["A>=1.0"]),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
 
             start = time.time()
@@ -642,14 +801,19 @@ class TestCircularDependencyHandling:
 
     def test_multiple_separate_circular_references(self) -> None:
         """Test multiple separate circular references in same tree."""
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0", "C>=1.0"]),
-            "B": ("1.0.0", ["A>=1.0"]),  # Circular: B → A
-            "C": ("1.0.0", ["D>=1.0"]),
-            "D": ("1.0.0", ["C>=1.0"]),  # Circular: D → C
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0", "C>=1.0"]),
+                "B": ("1.0.0", ["A>=1.0"]),  # Circular: B → A
+                "C": ("1.0.0", ["D>=1.0"]),
+                "D": ("1.0.0", ["C>=1.0"]),  # Circular: D → C
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["A"])
 
@@ -659,13 +823,18 @@ class TestCircularDependencyHandling:
 
     def test_circular_ref_path_tracking(self) -> None:
         """Test that circular reference path is tracked correctly."""
-        mock_dists = create_mock_distributions({
-            "root": ("1.0.0", ["mid>=1.0"]),
-            "mid": ("1.0.0", ["leaf>=1.0"]),
-            "leaf": ("1.0.0", ["root>=1.0"]),  # Circular back to root
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "root": ("1.0.0", ["mid>=1.0"]),
+                "mid": ("1.0.0", ["leaf>=1.0"]),
+                "leaf": ("1.0.0", ["root>=1.0"]),  # Circular back to root
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["root"])
 
@@ -677,12 +846,17 @@ class TestCircularDependencyHandling:
 
     def test_node_circular_references_populated(self) -> None:
         """Test that DependencyNode.circular_references is populated."""
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0"]),
-            "B": ("1.0.0", ["A>=1.0"]),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0"]),
+                "B": ("1.0.0", ["A>=1.0"]),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["A"])
 
@@ -696,13 +870,18 @@ class TestCircularDependencyHandling:
 
     def test_no_circular_references_when_none_exist(self) -> None:
         """Test that tree has no circular refs when none exist."""
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0"]),
-            "B": ("1.0.0", ["C>=1.0"]),
-            "C": ("1.0.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0"]),
+                "B": ("1.0.0", ["C>=1.0"]),
+                "C": ("1.0.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["A"])
 
@@ -715,14 +894,22 @@ class TestCircularDependencyHandling:
         A → B → D
         A → C → D → B (creates circular because B already visited)
         """
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0", "C>=1.0"]),
-            "B": ("1.0.0", ["D>=1.0"]),
-            "C": ("1.0.0", ["D>=1.0"]),
-            "D": ("1.0.0", ["B>=1.0"]),  # D → B creates circular (B already visited)
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0", "C>=1.0"]),
+                "B": ("1.0.0", ["D>=1.0"]),
+                "C": ("1.0.0", ["D>=1.0"]),
+                "D": (
+                    "1.0.0",
+                    ["B>=1.0"],
+                ),  # D → B creates circular (B already visited)
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["A"])
 
@@ -741,11 +928,16 @@ class TestDependencyOriginPathTracking:
 
     def test_root_has_empty_origin_path(self) -> None:
         """Test that root nodes have empty origin_path."""
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["A"])
 
@@ -753,12 +945,17 @@ class TestDependencyOriginPathTracking:
 
     def test_direct_dep_has_root_in_path(self) -> None:
         """Test depth-1 dependency has parent in origin_path."""
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0"]),
-            "B": ("1.0.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0"]),
+                "B": ("1.0.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["A"])
 
@@ -767,14 +964,19 @@ class TestDependencyOriginPathTracking:
 
     def test_transitive_dep_has_full_chain(self) -> None:
         """Test depth-3 dependency has full chain in origin_path."""
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0"]),
-            "B": ("1.0.0", ["C>=1.0"]),
-            "C": ("1.0.0", ["D>=1.0"]),
-            "D": ("1.0.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0"]),
+                "B": ("1.0.0", ["C>=1.0"]),
+                "C": ("1.0.0", ["D>=1.0"]),
+                "D": ("1.0.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["A"])
 
@@ -783,14 +985,19 @@ class TestDependencyOriginPathTracking:
 
     def test_origin_path_with_multiple_roots(self) -> None:
         """Test origin_path is correct with multiple root packages."""
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["C>=1.0"]),
-            "B": ("1.0.0", ["D>=1.0"]),
-            "C": ("1.0.0", []),
-            "D": ("1.0.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["C>=1.0"]),
+                "B": ("1.0.0", ["D>=1.0"]),
+                "C": ("1.0.0", []),
+                "D": ("1.0.0", []),
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["A", "B"])
 
@@ -804,13 +1011,18 @@ class TestDependencyOriginPathTracking:
 
     def test_origin_path_with_circular_reference(self) -> None:
         """Test origin_path works correctly with circular dependencies."""
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0"]),
-            "B": ("1.0.0", ["C>=1.0"]),
-            "C": ("1.0.0", ["A>=1.0"]),  # Circular back to A
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0"]),
+                "B": ("1.0.0", ["C>=1.0"]),
+                "C": ("1.0.0", ["A>=1.0"]),  # Circular back to A
+            }
+        )
 
-        with patch("license_analyzer.resolvers.dependency.distributions", return_value=mock_dists):
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
             resolver = DependencyResolver()
             tree = resolver.resolve_tree(["A"])
 

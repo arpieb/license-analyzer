@@ -5,6 +5,7 @@ Calculates confidence levels (HIGH/MEDIUM/UNCERTAIN) based on:
 - License file modification status
 - Source reliability hierarchy
 """
+
 from enum import Enum
 from typing import Optional
 

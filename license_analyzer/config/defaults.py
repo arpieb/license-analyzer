@@ -1,4 +1,5 @@
 """Default configuration values for license-analyzer."""
+
 from __future__ import annotations
 
 from license_analyzer.models.config import AnalyzerConfig

@@ -1,4 +1,5 @@
 """JSON output formatter for license scan results."""
+
 import json
 from datetime import datetime, timezone
 from typing import Any
@@ -84,10 +85,11 @@ class ScanJsonFormatter:
 
         # Build ignored packages summary (FR24)
         ignored_packages = None
-        if result.ignored_packages_summary and result.ignored_packages_summary.ignored_count > 0:
+        ignored_summary = result.ignored_packages_summary
+        if ignored_summary and ignored_summary.ignored_count > 0:
             ignored_packages = {
-                "count": result.ignored_packages_summary.ignored_count,
-                "names": result.ignored_packages_summary.ignored_names or [],
+                "count": ignored_summary.ignored_count,
+                "names": ignored_summary.ignored_names or [],
             }
 
         return {

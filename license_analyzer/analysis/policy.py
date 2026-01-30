@@ -1,4 +1,5 @@
 """License policy checking for allowed licenses configuration."""
+
 from __future__ import annotations
 
 from license_analyzer.models.config import AnalyzerConfig

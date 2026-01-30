@@ -1,4 +1,5 @@
 """Tests for confidence level scoring."""
+
 import pytest
 from pydantic import ValidationError
 
@@ -108,9 +109,7 @@ class TestConfidenceScorer:
         assert result.level == ConfidenceLevel.HIGH
         assert len(result.sources_used) == 3
 
-    def test_high_confidence_pypi_readme_agree(
-        self, scorer: ConfidenceScorer
-    ) -> None:
+    def test_high_confidence_pypi_readme_agree(self, scorer: ConfidenceScorer) -> None:
         """Test HIGH when PyPI and README agree."""
         result = scorer.calculate(
             pypi_license="BSD-3-Clause",
@@ -153,9 +152,7 @@ class TestConfidenceScorer:
     # AC #2: MEDIUM confidence tests
     # ==========================================================================
 
-    def test_medium_confidence_pypi_only(
-        self, scorer: ConfidenceScorer
-    ) -> None:
+    def test_medium_confidence_pypi_only(self, scorer: ConfidenceScorer) -> None:
         """Test MEDIUM when only PyPI metadata available (AC #2)."""
         result = scorer.calculate(pypi_license="MIT")
 
@@ -233,9 +230,7 @@ class TestConfidenceScorer:
         assert result.level == ConfidenceLevel.UNCERTAIN
         assert len(result.sources_used) == 3
 
-    def test_uncertain_confidence_readme_only(
-        self, scorer: ConfidenceScorer
-    ) -> None:
+    def test_uncertain_confidence_readme_only(self, scorer: ConfidenceScorer) -> None:
         """Test UNCERTAIN when only README mention available (AC #3)."""
         result = scorer.calculate(readme_license="MIT")
 
@@ -285,9 +280,7 @@ class TestConfidenceScorer:
     # AC #4: No license found tests (FR14)
     # ==========================================================================
 
-    def test_uncertain_no_license_found(
-        self, scorer: ConfidenceScorer
-    ) -> None:
+    def test_uncertain_no_license_found(self, scorer: ConfidenceScorer) -> None:
         """Test UNCERTAIN when no license found from any source (FR14)."""
         result = scorer.calculate()
 
@@ -349,9 +342,7 @@ class TestConfidenceScorer:
     # Edge cases
     # ==========================================================================
 
-    def test_none_license_treated_as_no_license(
-        self, scorer: ConfidenceScorer
-    ) -> None:
+    def test_none_license_treated_as_no_license(self, scorer: ConfidenceScorer) -> None:
         """Test that None license values result in no license found."""
         result = scorer.calculate(pypi_license=None, github_license=None)
 
@@ -432,9 +423,7 @@ class TestConfidenceScorerSourcePriority:
         assert license_result.level == ConfidenceLevel.HIGH
         assert readme_result.level == ConfidenceLevel.UNCERTAIN
 
-    def test_pypi_higher_priority_than_readme(
-        self, scorer: ConfidenceScorer
-    ) -> None:
+    def test_pypi_higher_priority_than_readme(self, scorer: ConfidenceScorer) -> None:
         """PyPI alone gives MEDIUM, README alone gives UNCERTAIN."""
         pypi_result = scorer.calculate(pypi_license="MIT")
         readme_result = scorer.calculate(readme_license="MIT")

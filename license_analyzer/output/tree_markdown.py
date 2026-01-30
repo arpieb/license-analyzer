@@ -1,4 +1,5 @@
 """Markdown output formatter for dependency tree."""
+
 from license_analyzer.analysis.problematic import is_problematic_license
 from license_analyzer.models.dependency import DependencyNode, DependencyTree
 

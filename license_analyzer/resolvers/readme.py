@@ -1,4 +1,5 @@
 """README license mention resolver."""
+
 import re
 from typing import Any, Optional
 from urllib.parse import unquote
@@ -209,9 +210,7 @@ class ReadmeLicenseResolver(BaseResolver):
             return self._normalize_license_id(badge_license)
 
         # 3. "License: X" pattern
-        license_colon_match = re.search(
-            r"[Ll]icense:\s*([A-Za-z0-9\-\.]+)", content
-        )
+        license_colon_match = re.search(r"[Ll]icense:\s*([A-Za-z0-9\-\.]+)", content)
         if license_colon_match:
             return self._normalize_license_id(license_colon_match.group(1))
 

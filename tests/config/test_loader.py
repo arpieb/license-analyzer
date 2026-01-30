@@ -1,4 +1,5 @@
 """Tests for configuration file loader."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -48,7 +49,9 @@ class TestFindConfigFile:
         result = find_config_file(tmp_path)
         assert result == yaml_file
 
-    def test_uses_cwd_when_no_start_dir(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_uses_cwd_when_no_start_dir(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """Test that current working directory is used when start_dir is None."""
         config_file = tmp_path / ".license-analyzer.yaml"
         config_file.write_text("allowed_licenses:\n  - MIT\n")

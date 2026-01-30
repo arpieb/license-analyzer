@@ -1,4 +1,5 @@
 """Tests for constants module."""
+
 from license_analyzer.constants import LEGAL_DISCLAIMER, LEGAL_DISCLAIMER_SHORT
 
 

@@ -1,4 +1,5 @@
 """Shared fixtures for license-analyzer tests."""
+
 import pytest
 from click.testing import CliRunner
 

@@ -3,6 +3,7 @@
 Provides functions to identify licenses that may be problematic for
 commercial or permissive-licensed projects (FR10).
 """
+
 from enum import Enum
 from typing import Optional
 

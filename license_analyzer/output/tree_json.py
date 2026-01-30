@@ -1,4 +1,5 @@
 """JSON output formatter for dependency tree."""
+
 import json
 from typing import Any
 

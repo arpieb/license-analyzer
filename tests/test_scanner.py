@@ -1,4 +1,5 @@
 """Tests for scanner module."""
+
 from io import StringIO
 from typing import Any, Optional
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -158,9 +159,7 @@ class TestResolveLicenses:
             PackageLicense(name="failing-pkg", version="1.0.0", license=None),
         ]
 
-        async def mock_fetch(
-            name: str, client: Any = None
-        ) -> Optional[dict[str, Any]]:
+        async def mock_fetch(name: str, client: Any = None) -> Optional[dict[str, Any]]:
             if name == "failing-pkg":
                 raise NetworkError("Connection failed")
             return {"info": {"license": "MIT"}}
@@ -186,9 +185,7 @@ class TestResolveLicenses:
             PackageLicense(name="click", version="8.1.0", license=None),
         ]
 
-        async def mock_fetch(
-            name: str, client: Any = None
-        ) -> Optional[dict[str, Any]]:
+        async def mock_fetch(name: str, client: Any = None) -> Optional[dict[str, Any]]:
             raise ValueError("Unexpected bug")
 
         with (
@@ -235,9 +232,7 @@ class TestResolveLicenses:
             }
         }
 
-        async def mock_fetch(
-            name: str, client: Any = None
-        ) -> Optional[dict[str, Any]]:
+        async def mock_fetch(name: str, client: Any = None) -> Optional[dict[str, Any]]:
             return pypi_metadata
 
         # Mock GitHub resolver to return None (no LICENSE file found)
@@ -276,9 +271,7 @@ class TestResolveLicenses:
             }
         }
 
-        async def mock_fetch(
-            name: str, client: Any = None
-        ) -> Optional[dict[str, Any]]:
+        async def mock_fetch(name: str, client: Any = None) -> Optional[dict[str, Any]]:
             return pypi_metadata
 
         # Mock GitHub resolver to return MIT from LICENSE file
@@ -315,9 +308,7 @@ class TestResolveLicenses:
             }
         }
 
-        async def mock_fetch(
-            name: str, client: Any = None
-        ) -> Optional[dict[str, Any]]:
+        async def mock_fetch(name: str, client: Any = None) -> Optional[dict[str, Any]]:
             return pypi_metadata
 
         # Mock GitHub resolver (should NOT be called)
@@ -378,9 +369,7 @@ class TestResolveLicenses:
             PackageLicense(name="click", version="8.1.0", license=None),
         ]
 
-        async def mock_fetch(
-            name: str, client: Any = None
-        ) -> Optional[dict[str, Any]]:
+        async def mock_fetch(name: str, client: Any = None) -> Optional[dict[str, Any]]:
             return {"info": {"license": "MIT"}}
 
         string_io = StringIO()
@@ -408,9 +397,7 @@ class TestResolveLicenses:
             PackageLicense(name="failing-pkg", version="1.0.0", license=None),
         ]
 
-        async def mock_fetch(
-            name: str, client: Any = None
-        ) -> Optional[dict[str, Any]]:
+        async def mock_fetch(name: str, client: Any = None) -> Optional[dict[str, Any]]:
             if name == "failing-pkg":
                 raise NetworkError("Connection failed")
             return {"info": {"license": "MIT"}}
@@ -453,9 +440,7 @@ class TestResolveLicenses:
             PackageLicense(name="no-pypi-pkg", version="1.0.0", license=None),
         ]
 
-        async def mock_fetch(
-            name: str, client: Any = None
-        ) -> Optional[dict[str, Any]]:
+        async def mock_fetch(name: str, client: Any = None) -> Optional[dict[str, Any]]:
             return None  # Package not on PyPI
 
         # Mock GitHub resolver
@@ -494,9 +479,7 @@ class TestResolveLicenses:
             }
         }
 
-        async def mock_fetch(
-            name: str, client: Any = None
-        ) -> Optional[dict[str, Any]]:
+        async def mock_fetch(name: str, client: Any = None) -> Optional[dict[str, Any]]:
             return pypi_metadata
 
         # Mock GitHub resolver to return None (no LICENSE file found)
@@ -544,9 +527,7 @@ class TestResolveLicenses:
             }
         }
 
-        async def mock_fetch(
-            name: str, client: Any = None
-        ) -> Optional[dict[str, Any]]:
+        async def mock_fetch(name: str, client: Any = None) -> Optional[dict[str, Any]]:
             return pypi_metadata
 
         # Mock GitHub resolver to return Apache-2.0
@@ -586,9 +567,7 @@ class TestResolveLicenses:
             PackageLicense(name="no-pypi-pkg", version="1.0.0", license=None),
         ]
 
-        async def mock_fetch(
-            name: str, client: Any = None
-        ) -> Optional[dict[str, Any]]:
+        async def mock_fetch(name: str, client: Any = None) -> Optional[dict[str, Any]]:
             return None  # Package not on PyPI
 
         # Mock resolvers
@@ -647,7 +626,7 @@ class MockDistribution:
 
 
 def create_mock_distributions(
-    packages: dict[str, tuple[str, Optional[list[str]]]]
+    packages: dict[str, tuple[str, Optional[list[str]]]],
 ) -> list[MockDistribution]:
     """Create list of mock distributions for testing."""
     return [
@@ -661,9 +640,11 @@ class TestResolveDependencyTree:
 
     def test_resolves_single_package(self) -> None:
         """Test resolving dependency tree for single package."""
-        mock_dists = create_mock_distributions({
-            "requests": ("2.31.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "requests": ("2.31.0", []),
+            }
+        )
 
         with patch(
             "license_analyzer.resolvers.dependency.distributions",
@@ -678,10 +659,12 @@ class TestResolveDependencyTree:
 
     def test_resolves_transitive_dependencies(self) -> None:
         """Test resolving transitive dependencies."""
-        mock_dists = create_mock_distributions({
-            "requests": ("2.31.0", ["certifi>=2017.4.17"]),
-            "certifi": ("2023.7.22", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "requests": ("2.31.0", ["certifi>=2017.4.17"]),
+                "certifi": ("2023.7.22", []),
+            }
+        )
 
         with patch(
             "license_analyzer.resolvers.dependency.distributions",
@@ -696,11 +679,13 @@ class TestResolveDependencyTree:
 
     def test_respects_max_depth(self) -> None:
         """Test that max_depth limits traversal."""
-        mock_dists = create_mock_distributions({
-            "A": ("1.0.0", ["B>=1.0"]),
-            "B": ("1.0.0", ["C>=1.0"]),
-            "C": ("1.0.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "A": ("1.0.0", ["B>=1.0"]),
+                "B": ("1.0.0", ["C>=1.0"]),
+                "C": ("1.0.0", []),
+            }
+        )
 
         with patch(
             "license_analyzer.resolvers.dependency.distributions",
@@ -717,9 +702,11 @@ class TestResolveDependencyTree:
 
     def test_license_is_none_by_default(self) -> None:
         """Test that license field is None (populated separately)."""
-        mock_dists = create_mock_distributions({
-            "requests": ("2.31.0", []),
-        })
+        mock_dists = create_mock_distributions(
+            {
+                "requests": ("2.31.0", []),
+            }
+        )
 
         with patch(
             "license_analyzer.resolvers.dependency.distributions",
@@ -781,7 +768,11 @@ class TestAttachLicensesToTree:
             name="idna", version="3.4", depth=2, license=None, children=[]
         )
         child = DependencyNode(
-            name="urllib3", version="2.0.0", depth=1, license=None, children=[grandchild]
+            name="urllib3",
+            version="2.0.0",
+            depth=1,
+            license=None,
+            children=[grandchild],
         )
         root = DependencyNode(
             name="requests", version="2.31.0", depth=0, license=None, children=[child]

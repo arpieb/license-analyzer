@@ -1,4 +1,5 @@
 """Tests for custom exceptions."""
+
 from license_analyzer.exceptions import (
     ConfigurationError,
     LicenseAnalyzerError,

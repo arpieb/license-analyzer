@@ -1,4 +1,5 @@
 """Tests for scan models."""
+
 from license_analyzer.models.config import AnalyzerConfig
 from license_analyzer.models.scan import (
     IgnoredPackagesSummary,

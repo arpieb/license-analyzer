@@ -1,4 +1,5 @@
 """Tests for JSON scan result formatter."""
+
 import json
 import re
 
@@ -28,9 +29,11 @@ class TestScanJsonFormatter:
     def test_format_single_package(self) -> None:
         """Test formatting result with single package."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="requests", version="2.28.0", license="Apache-2.0"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="requests", version="2.28.0", license="Apache-2.0"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -43,10 +46,12 @@ class TestScanJsonFormatter:
     def test_format_multiple_packages(self) -> None:
         """Test formatting result with multiple packages."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-            PackageLicense(name="requests", version="2.28.0", license="Apache-2.0"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+                PackageLicense(name="requests", version="2.28.0", license="Apache-2.0"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -56,10 +61,12 @@ class TestScanJsonFormatter:
     def test_output_is_valid_json(self) -> None:
         """Test output is always valid parseable JSON."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-            PackageLicense(name="unknown", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+                PackageLicense(name="unknown", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -70,9 +77,11 @@ class TestScanJsonFormatter:
     def test_output_is_pretty_printed(self) -> None:
         """Test output is indented for readability."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -87,9 +96,11 @@ class TestScanJsonFormatterMetadata:
     def test_scan_metadata_present(self) -> None:
         """Test scan_metadata section is present."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -99,9 +110,11 @@ class TestScanJsonFormatterMetadata:
     def test_generated_at_is_iso8601(self) -> None:
         """Test generated_at timestamp is in ISO 8601 format."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -114,9 +127,11 @@ class TestScanJsonFormatterMetadata:
     def test_tool_version_present(self) -> None:
         """Test tool_version is present in metadata."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -133,9 +148,11 @@ class TestScanJsonFormatterSummary:
     def test_summary_section_present(self) -> None:
         """Test summary section is present."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -145,11 +162,13 @@ class TestScanJsonFormatterSummary:
     def test_summary_total_packages(self) -> None:
         """Test summary shows total package count."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-            PackageLicense(name="requests", version="2.28.0", license="Apache-2.0"),
-            PackageLicense(name="httpx", version="0.24.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+                PackageLicense(name="requests", version="2.28.0", license="Apache-2.0"),
+                PackageLicense(name="httpx", version="0.24.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -159,10 +178,12 @@ class TestScanJsonFormatterSummary:
     def test_summary_licenses_found(self) -> None:
         """Test summary shows licenses found count."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-            PackageLicense(name="unknown", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+                PackageLicense(name="unknown", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -172,10 +193,12 @@ class TestScanJsonFormatterSummary:
     def test_summary_issues_found(self) -> None:
         """Test summary shows issues found count."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-            PackageLicense(name="unknown", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+                PackageLicense(name="unknown", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -185,9 +208,11 @@ class TestScanJsonFormatterSummary:
     def test_summary_status_pass(self) -> None:
         """Test summary status is 'pass' when no issues."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -197,9 +222,11 @@ class TestScanJsonFormatterSummary:
     def test_summary_status_issues_found(self) -> None:
         """Test summary status is 'issues_found' when issues exist."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -209,9 +236,11 @@ class TestScanJsonFormatterSummary:
     def test_summary_has_issues_flag_true(self) -> None:
         """Test summary has_issues is true when issues exist."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -221,9 +250,11 @@ class TestScanJsonFormatterSummary:
     def test_summary_has_issues_flag_false(self) -> None:
         """Test summary has_issues is false when no issues."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -237,9 +268,11 @@ class TestScanJsonFormatterPackages:
     def test_packages_array_present(self) -> None:
         """Test packages array is present."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -250,11 +283,13 @@ class TestScanJsonFormatterPackages:
     def test_packages_sorted_alphabetically(self) -> None:
         """Test packages are sorted alphabetically by name."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="zlib", version="1.0.0", license="MIT"),
-            PackageLicense(name="aiohttp", version="3.0.0", license="Apache-2.0"),
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="zlib", version="1.0.0", license="MIT"),
+                PackageLicense(name="aiohttp", version="3.0.0", license="Apache-2.0"),
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -265,11 +300,13 @@ class TestScanJsonFormatterPackages:
     def test_packages_sorted_case_insensitive(self) -> None:
         """Test packages are sorted case-insensitively."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="Zlib", version="1.0.0", license="MIT"),
-            PackageLicense(name="aiohttp", version="3.0.0", license="Apache-2.0"),
-            PackageLicense(name="Requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="Zlib", version="1.0.0", license="MIT"),
+                PackageLicense(name="aiohttp", version="3.0.0", license="Apache-2.0"),
+                PackageLicense(name="Requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -280,9 +317,11 @@ class TestScanJsonFormatterPackages:
     def test_package_has_license_true(self) -> None:
         """Test has_license is true when license exists."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -292,9 +331,11 @@ class TestScanJsonFormatterPackages:
     def test_package_has_license_false(self) -> None:
         """Test has_license is false when license is None."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -304,9 +345,11 @@ class TestScanJsonFormatterPackages:
     def test_package_license_null_in_json(self) -> None:
         """Test license is null in JSON when not found."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -320,9 +363,11 @@ class TestScanJsonFormatterIssues:
     def test_issues_array_present(self) -> None:
         """Test issues array is present."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -333,10 +378,12 @@ class TestScanJsonFormatterIssues:
     def test_issues_array_empty_when_no_issues(self) -> None:
         """Test issues array is empty when all packages have licenses."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-            PackageLicense(name="requests", version="2.28.0", license="MIT"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+                PackageLicense(name="requests", version="2.28.0", license="MIT"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -346,9 +393,11 @@ class TestScanJsonFormatterIssues:
     def test_issues_array_populated_when_issues(self) -> None:
         """Test issues array contains issues when packages have no license."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -360,9 +409,11 @@ class TestScanJsonFormatterIssues:
     def test_issue_has_type(self) -> None:
         """Test issue has issue_type field."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -372,9 +423,11 @@ class TestScanJsonFormatterIssues:
     def test_issue_has_suggestion(self) -> None:
         """Test issue has suggestion field."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -385,10 +438,12 @@ class TestScanJsonFormatterIssues:
     def test_issues_sorted_alphabetically(self) -> None:
         """Test issues are sorted alphabetically by package name."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="zlib-unknown", version="1.0.0", license=None),
-            PackageLicense(name="aiohttp-unknown", version="3.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="zlib-unknown", version="1.0.0", license=None),
+                PackageLicense(name="aiohttp-unknown", version="3.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -403,9 +458,11 @@ class TestScanJsonFormatterSnakeCase:
     def test_all_top_level_fields_snake_case(self) -> None:
         """Test all top-level fields use snake_case."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -416,9 +473,11 @@ class TestScanJsonFormatterSnakeCase:
     def test_scan_metadata_fields_snake_case(self) -> None:
         """Test scan_metadata fields use snake_case."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -432,9 +491,11 @@ class TestScanJsonFormatterSnakeCase:
     def test_summary_fields_snake_case(self) -> None:
         """Test summary fields use snake_case."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -461,9 +522,11 @@ class TestScanJsonFormatterSnakeCase:
     def test_package_fields_snake_case(self) -> None:
         """Test package fields use snake_case."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -474,9 +537,11 @@ class TestScanJsonFormatterSnakeCase:
     def test_issue_fields_snake_case(self) -> None:
         """Test issue fields use snake_case."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -491,9 +556,11 @@ class TestScanJsonFormatterExecutiveSummary:
     def test_summary_has_overall_status(self) -> None:
         """Test summary includes overall_status field."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -503,9 +570,11 @@ class TestScanJsonFormatterExecutiveSummary:
     def test_summary_has_status_message(self) -> None:
         """Test summary includes status_message field."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -515,9 +584,11 @@ class TestScanJsonFormatterExecutiveSummary:
     def test_overall_status_pass(self) -> None:
         """Test overall_status is PASS when no issues."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -527,9 +598,11 @@ class TestScanJsonFormatterExecutiveSummary:
     def test_overall_status_issues_found(self) -> None:
         """Test overall_status is ISSUES_FOUND when issues exist."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -539,9 +612,11 @@ class TestScanJsonFormatterExecutiveSummary:
     def test_status_message_pass(self) -> None:
         """Test status_message when no issues."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -551,10 +626,12 @@ class TestScanJsonFormatterExecutiveSummary:
     def test_status_message_issues_found(self) -> None:
         """Test status_message when issues exist."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown1", version="1.0.0", license=None),
-            PackageLicense(name="unknown2", version="2.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown1", version="1.0.0", license=None),
+                PackageLicense(name="unknown2", version="2.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -564,9 +641,11 @@ class TestScanJsonFormatterExecutiveSummary:
     def test_status_fields_snake_case(self) -> None:
         """Test executive summary fields use snake_case."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -581,9 +660,11 @@ class TestScanJsonFormatterExecutiveSummary:
     def test_existing_summary_fields_preserved(self) -> None:
         """Test existing summary fields are still present."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -602,9 +683,11 @@ class TestScanJsonFormatterEdgeCases:
     def test_empty_string_license_treated_as_no_license(self) -> None:
         """Test empty string license is treated as no license (has_license=False)."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="pkg-empty-license", version="1.0.0", license=""),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="pkg-empty-license", version="1.0.0", license=""),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -616,9 +699,11 @@ class TestScanJsonFormatterEdgeCases:
     def test_section_order_in_output(self) -> None:
         """Test JSON sections appear in logical order."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
 
@@ -635,9 +720,11 @@ class TestScanJsonFormatterEdgeCases:
         from license_analyzer import __version__
 
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -658,9 +745,11 @@ class TestScanJsonFormatterEdgeCases:
     def test_status_message_singular_issue(self) -> None:
         """Test status_message with single issue uses correct pluralization."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="unknown", version="1.0.0", license=None),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="unknown", version="1.0.0", license=None),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -674,9 +763,11 @@ class TestScanJsonFormatterDisclaimer:
     def test_metadata_has_disclaimer(self) -> None:
         """Test scan_metadata includes disclaimer field."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -686,9 +777,11 @@ class TestScanJsonFormatterDisclaimer:
     def test_metadata_has_disclaimer_type(self) -> None:
         """Test scan_metadata includes disclaimer_type field."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -698,9 +791,11 @@ class TestScanJsonFormatterDisclaimer:
     def test_disclaimer_matches_constant(self) -> None:
         """Test disclaimer text matches the LEGAL_DISCLAIMER constant."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -710,9 +805,11 @@ class TestScanJsonFormatterDisclaimer:
     def test_disclaimer_type_is_informational(self) -> None:
         """Test disclaimer_type value is 'informational'."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)
@@ -722,9 +819,11 @@ class TestScanJsonFormatterDisclaimer:
     def test_disclaimer_fields_snake_case(self) -> None:
         """Test disclaimer fields use snake_case naming."""
         formatter = ScanJsonFormatter()
-        result = ScanResult.from_packages([
-            PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
-        ])
+        result = ScanResult.from_packages(
+            [
+                PackageLicense(name="click", version="8.1.0", license="BSD-3-Clause"),
+            ]
+        )
 
         output = formatter.format_scan_result(result)
         data = json.loads(output)

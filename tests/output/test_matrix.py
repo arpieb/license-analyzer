@@ -1,4 +1,5 @@
 """Tests for terminal matrix formatter."""
+
 from io import StringIO
 
 from rich.console import Console

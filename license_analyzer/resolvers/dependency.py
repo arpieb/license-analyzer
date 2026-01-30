@@ -3,6 +3,7 @@
 Provides DependencyResolver class for building dependency trees (FR7).
 Implements circular dependency detection and tracking (FR8).
 """
+
 from importlib.metadata import Distribution, distributions
 from typing import Optional
 
@@ -189,11 +190,13 @@ class DependencyResolver:
                 # Record on the parent node
                 node_circular_references.append(req.name)
                 # Record in the global list
-                circular_refs.append(CircularReference(
-                    from_package=path[-1] if path else "root",
-                    to_package=req.name,
-                    path=path + [req.name],
-                ))
+                circular_refs.append(
+                    CircularReference(
+                        from_package=path[-1] if path else "root",
+                        to_package=req.name,
+                        path=path + [req.name],
+                    )
+                )
                 return None
 
             return self._resolve_package(

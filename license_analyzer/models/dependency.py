@@ -4,6 +4,7 @@ Provides data structures for representing transitive dependency relationships (F
 Includes circular dependency detection and tracking (FR8).
 Includes license compatibility checking models (FR13).
 """
+
 from enum import Enum
 from typing import Optional
 

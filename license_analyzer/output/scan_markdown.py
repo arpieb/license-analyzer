@@ -1,4 +1,5 @@
 """Markdown output formatter for license scan results."""
+
 from datetime import datetime, timezone
 
 from license_analyzer.constants import LEGAL_DISCLAIMER
@@ -114,28 +115,32 @@ class ScanMarkdownFormatter:
             lines.append(f"| Policy Violations | {len(result.policy_violations)} |")
 
         # Add ignored packages row if any were ignored (FR24)
-        if result.ignored_packages_summary and result.ignored_packages_summary.ignored_count > 0:
-            lines.append(
-                f"| Packages Ignored | {result.ignored_packages_summary.ignored_count} |"
-            )
+        ignored = result.ignored_packages_summary
+        if ignored and ignored.ignored_count > 0:
+            lines.append(f"| Packages Ignored | {ignored.ignored_count} |")
 
         # Add overrides count if any were applied (FR25)
         overrides_count = sum(1 for pkg in result.packages if pkg.is_overridden)
         if overrides_count > 0:
             lines.append(f"| Overrides Applied | {overrides_count} |")
 
-        lines.extend([
-            f"| **Status** | **{status}** |",
-            "",
-            f"> {message}",
-        ])
+        lines.extend(
+            [
+                f"| **Status** | **{status}** |",
+                "",
+                f"> {message}",
+            ]
+        )
 
         # Add ignored packages note if any were ignored (FR24)
-        if result.ignored_packages_summary and result.ignored_packages_summary.ignored_count > 0:
-            ignored = result.ignored_packages_summary
-            if ignored.ignored_names:
-                names_str = ", ".join(ignored.ignored_names)
-                lines.extend(["", f"> *{ignored.ignored_count} packages ignored: {names_str}*"])
+        if ignored and ignored.ignored_count > 0 and ignored.ignored_names:
+            names_str = ", ".join(ignored.ignored_names)
+            lines.extend(
+                [
+                    "",
+                    f"> *{ignored.ignored_count} packages ignored: {names_str}*",
+                ]
+            )
 
         return lines
 
@@ -169,9 +174,7 @@ class ScanMarkdownFormatter:
             status = "passing"
             color = "green"
 
-        badge_url = (
-            f"https://img.shields.io/badge/License%20Scan-{status}-{color}"
-        )
+        badge_url = f"https://img.shields.io/badge/License%20Scan-{status}-{color}"
         return [f"![Status]({badge_url})"]
 
     def _format_packages(self, result: ScanResult) -> list[str]:
@@ -284,9 +287,7 @@ class ScanMarkdownFormatter:
 
         return lines
 
-    def _format_overrides(
-        self, overridden_packages: list[PackageLicense]
-    ) -> list[str]:
+    def _format_overrides(self, overridden_packages: list[PackageLicense]) -> list[str]:
         """Format overrides applied section.
 
         Args:
@@ -296,10 +297,11 @@ class ScanMarkdownFormatter:
             List of Markdown lines for overrides section.
         """
 
+        count = len(overridden_packages)
         lines = [
             "## Overrides Applied",
             "",
-            f"> **{len(overridden_packages)} package(s) have manual license overrides**",
+            f"> **{count} package(s) have manual license overrides**",
             "",
             "| Package | Original | Override | Reason |",
             "|---------|----------|----------|--------|",
@@ -312,8 +314,6 @@ class ScanMarkdownFormatter:
             original = pkg.original_license or "Unknown"
             override_license = pkg.license or "Unknown"
             reason = pkg.override_reason or ""
-            lines.append(
-                f"| {pkg.name} | {original} | {override_license} | {reason} |"
-            )
+            lines.append(f"| {pkg.name} | {original} | {override_license} | {reason} |")
 
         return lines

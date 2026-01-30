@@ -1,4 +1,5 @@
 """License resolvers package."""
+
 from license_analyzer.resolvers.base import BaseResolver
 from license_analyzer.resolvers.dependency import DependencyResolver
 from license_analyzer.resolvers.github import GitHubLicenseResolver

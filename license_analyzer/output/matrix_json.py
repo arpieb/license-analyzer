@@ -1,4 +1,5 @@
 """JSON matrix formatter for license compatibility visualization."""
+
 import json
 from typing import Any
 
@@ -43,12 +44,12 @@ class MatrixJsonFormatter:
 
         # Count issues by type
         incompatible_count = sum(
-            1 for issue in matrix.issues
+            1
+            for issue in matrix.issues
             if issue.status == CompatibilityStatus.INCOMPATIBLE
         )
         unknown_count = sum(
-            1 for issue in matrix.issues
-            if issue.status == CompatibilityStatus.UNKNOWN
+            1 for issue in matrix.issues if issue.status == CompatibilityStatus.UNKNOWN
         )
 
         return {

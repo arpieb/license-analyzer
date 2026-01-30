@@ -1,4 +1,5 @@
 """Tests for tree output formatter."""
+
 from io import StringIO
 
 from rich.console import Console
@@ -98,9 +99,7 @@ class TestTreeFormatterLicenseColors:
         console = Console(file=output, force_terminal=True, width=100)
         formatter = TreeFormatter(console=console)
 
-        root = DependencyNode(
-            name="pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root = DependencyNode(name="pkg", version="1.0.0", depth=0, license="MIT")
         tree = DependencyTree(roots=[root])
         formatter.format_dependency_tree(tree)
 
@@ -148,9 +147,7 @@ class TestTreeFormatterLicenseColors:
         console = Console(file=output, force_terminal=True, width=100)
         formatter = TreeFormatter(console=console)
 
-        root = DependencyNode(
-            name="mystery", version="1.0.0", depth=0, license=None
-        )
+        root = DependencyNode(name="mystery", version="1.0.0", depth=0, license=None)
         tree = DependencyTree(roots=[root])
         formatter.format_dependency_tree(tree)
 
@@ -191,9 +188,7 @@ class TestTreeFormatterCircularDependencies:
         console = Console(file=output, force_terminal=True, width=100)
         formatter = TreeFormatter(console=console)
 
-        root = DependencyNode(
-            name="pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root = DependencyNode(name="pkg", version="1.0.0", depth=0, license="MIT")
         tree = DependencyTree(roots=[root])
         formatter.format_dependency_tree(tree)
 
@@ -211,9 +206,7 @@ class TestTreeFormatterSummary:
         console = Console(file=output, force_terminal=True, width=100)
         formatter = TreeFormatter(console=console)
 
-        child = DependencyNode(
-            name="child", version="1.0.0", depth=1, license="MIT"
-        )
+        child = DependencyNode(name="child", version="1.0.0", depth=1, license="MIT")
         root = DependencyNode(
             name="root",
             version="1.0.0",
@@ -235,12 +228,8 @@ class TestTreeFormatterSummary:
         console = Console(file=output, force_terminal=True, width=100)
         formatter = TreeFormatter(console=console)
 
-        root1 = DependencyNode(
-            name="pkg-a", version="1.0.0", depth=0, license="MIT"
-        )
-        root2 = DependencyNode(
-            name="pkg-b", version="1.0.0", depth=0, license="MIT"
-        )
+        root1 = DependencyNode(name="pkg-a", version="1.0.0", depth=0, license="MIT")
+        root2 = DependencyNode(name="pkg-b", version="1.0.0", depth=0, license="MIT")
         tree = DependencyTree(roots=[root1, root2])
         formatter.format_dependency_tree(tree)
 
@@ -284,9 +273,7 @@ class TestTreeFormatterNodeLabel:
     def test_format_node_label_basic(self) -> None:
         """Test basic node label format."""
         formatter = TreeFormatter()
-        node = DependencyNode(
-            name="requests", version="2.31.0", depth=0, license="MIT"
-        )
+        node = DependencyNode(name="requests", version="2.31.0", depth=0, license="MIT")
 
         label = formatter._format_node_label(node)
 
@@ -310,9 +297,7 @@ class TestTreeFormatterNodeLabel:
     def test_format_node_label_unknown_license(self) -> None:
         """Test node label shows Unknown for None license."""
         formatter = TreeFormatter()
-        node = DependencyNode(
-            name="mystery", version="1.0.0", depth=0, license=None
-        )
+        node = DependencyNode(name="mystery", version="1.0.0", depth=0, license=None)
 
         label = formatter._format_node_label(node)
 
@@ -329,9 +314,7 @@ class TestTreeFormatterLicenseCategories:
         console = Console(file=output, force_terminal=True, width=100)
         formatter = TreeFormatter(console=console)
 
-        root = DependencyNode(
-            name="pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root = DependencyNode(name="pkg", version="1.0.0", depth=0, license="MIT")
         tree = DependencyTree(roots=[root])
         formatter.format_dependency_tree(tree)
 
@@ -344,9 +327,7 @@ class TestTreeFormatterLicenseCategories:
         console = Console(file=output, force_terminal=True, width=100)
         formatter = TreeFormatter(console=console)
 
-        root = DependencyNode(
-            name="pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root = DependencyNode(name="pkg", version="1.0.0", depth=0, license="MIT")
         tree = DependencyTree(roots=[root])
         formatter.format_dependency_tree(tree)
 
@@ -380,9 +361,7 @@ class TestTreeFormatterLicenseCategories:
         console = Console(file=output, force_terminal=True, width=100)
         formatter = TreeFormatter(console=console)
 
-        root = DependencyNode(
-            name="pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root = DependencyNode(name="pkg", version="1.0.0", depth=0, license="MIT")
         tree = DependencyTree(roots=[root])
         formatter.format_dependency_tree(tree)
 
@@ -391,7 +370,5 @@ class TestTreeFormatterLicenseCategories:
         assert "Permissive" in result
         # Count of 0 lines that mention Copyleft - it should not appear at all
         lines = result.split("\n")
-        copyleft_lines = [
-            line for line in lines if "Copyleft:" in line and "1" in line
-        ]
+        copyleft_lines = [line for line in lines if "Copyleft:" in line and "1" in line]
         assert len(copyleft_lines) == 0

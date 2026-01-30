@@ -2,6 +2,7 @@
 
 Detects when multiple sources disagree about a package's license (FR12).
 """
+
 from typing import Optional
 
 from pydantic import BaseModel, Field, computed_field

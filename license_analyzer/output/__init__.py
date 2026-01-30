@@ -1,4 +1,5 @@
 """Output formatters for license-analyzer."""
+
 from license_analyzer.output.matrix import MatrixFormatter
 from license_analyzer.output.matrix_json import MatrixJsonFormatter
 from license_analyzer.output.matrix_markdown import MatrixMarkdownFormatter

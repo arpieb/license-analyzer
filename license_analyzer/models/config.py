@@ -1,7 +1,8 @@
 """Configuration Pydantic models for license-analyzer."""
+
 from __future__ import annotations
 
-from typing import Dict, List, Optional
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -27,16 +28,16 @@ class AnalyzerConfig(BaseModel):
 
     model_config = {"extra": "forbid"}
 
-    allowed_licenses: Optional[List[str]] = Field(
+    allowed_licenses: Optional[list[str]] = Field(
         default=None,
         description="List of allowed SPDX license identifiers. "
         "Packages with other licenses will be flagged.",
     )
-    ignored_packages: Optional[List[str]] = Field(
+    ignored_packages: Optional[list[str]] = Field(
         default=None,
         description="List of package names to skip during scanning.",
     )
-    overrides: Optional[Dict[str, LicenseOverride]] = Field(
+    overrides: Optional[dict[str, LicenseOverride]] = Field(
         default=None,
         description="Manual license overrides by package name.",
     )

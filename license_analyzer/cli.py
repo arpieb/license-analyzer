@@ -1,4 +1,5 @@
 """CLI entry point for license-analyzer."""
+
 from __future__ import annotations
 
 import asyncio
@@ -495,9 +496,7 @@ def _display_matrix(
             content = MatrixMarkdownFormatter().format_matrix(matrix)
         else:
             # Display directly to terminal with verbosity support
-            MatrixFormatter(
-                console=_console, verbosity=verbosity
-            ).format_matrix(matrix)
+            MatrixFormatter(console=_console, verbosity=verbosity).format_matrix(matrix)
             return
 
     if output_path:
@@ -531,9 +530,9 @@ def _display_tree(
             content = TreeMarkdownFormatter().format_dependency_tree(tree)
         else:
             # Display directly to terminal with verbosity support
-            TreeFormatter(
-                console=_console, verbosity=verbosity
-            ).format_dependency_tree(tree)
+            TreeFormatter(console=_console, verbosity=verbosity).format_dependency_tree(
+                tree
+            )
             return
 
     if output_path:

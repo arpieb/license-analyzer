@@ -1,4 +1,5 @@
 """Tree output formatter for dependency visualization."""
+
 from typing import Optional
 
 from rich.console import Console

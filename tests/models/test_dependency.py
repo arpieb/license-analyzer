@@ -1,4 +1,5 @@
 """Tests for dependency tree models."""
+
 import pytest
 from pydantic import ValidationError
 
@@ -695,9 +696,7 @@ class TestDependencyTreeInfectionPaths:
 
     def test_format_infection_path(self) -> None:
         """Test infection path formatting with license info."""
-        root = DependencyNode(
-            name="myapp", version="1.0.0", depth=0, license="MIT"
-        )
+        root = DependencyNode(name="myapp", version="1.0.0", depth=0, license="MIT")
         child = DependencyNode(
             name="middleware", version="2.0.0", depth=1, license="Apache-2.0"
         )
@@ -719,9 +718,7 @@ class TestDependencyTreeInfectionPaths:
 
     def test_format_infection_path_with_none_license(self) -> None:
         """Test formatting path when node has None license."""
-        root = DependencyNode(
-            name="myapp", version="1.0.0", depth=0, license=None
-        )
+        root = DependencyNode(name="myapp", version="1.0.0", depth=0, license=None)
         child = DependencyNode(
             name="unknown-pkg", version="2.0.0", depth=1, license=None
         )
@@ -1047,9 +1044,7 @@ class TestDependencyTreeLicenseStatistics:
 
     def test_all_permissive_licenses(self) -> None:
         """Test statistics when all licenses are permissive."""
-        root1 = DependencyNode(
-            name="pkg-a", version="1.0.0", depth=0, license="MIT"
-        )
+        root1 = DependencyNode(name="pkg-a", version="1.0.0", depth=0, license="MIT")
         root2 = DependencyNode(
             name="pkg-b", version="1.0.0", depth=0, license="Apache-2.0"
         )
@@ -1065,9 +1060,7 @@ class TestDependencyTreeLicenseStatistics:
 
     def test_mixed_licenses(self) -> None:
         """Test statistics with mixed license types."""
-        root1 = DependencyNode(
-            name="mit-pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root1 = DependencyNode(name="mit-pkg", version="1.0.0", depth=0, license="MIT")
         root2 = DependencyNode(
             name="gpl-pkg", version="1.0.0", depth=0, license="GPL-3.0"
         )
@@ -1114,9 +1107,7 @@ class TestDependencyTreeLicenseStatistics:
 
     def test_unknown_license_as_none(self) -> None:
         """Test None license is counted as Unknown."""
-        root = DependencyNode(
-            name="pkg", version="1.0.0", depth=0, license=None
-        )
+        root = DependencyNode(name="pkg", version="1.0.0", depth=0, license=None)
         tree = DependencyTree(roots=[root])
 
         stats = tree.get_license_statistics()
@@ -1127,9 +1118,7 @@ class TestDependencyTreeLicenseStatistics:
     def test_percentage_rounding(self) -> None:
         """Test percentage is rounded to 1 decimal place."""
         # 3 packages: 1 MIT, 1 GPL, 1 Unknown = 33.3% each
-        root1 = DependencyNode(
-            name="mit-pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root1 = DependencyNode(name="mit-pkg", version="1.0.0", depth=0, license="MIT")
         root2 = DependencyNode(
             name="gpl-pkg", version="1.0.0", depth=0, license="GPL-3.0"
         )
@@ -1156,9 +1145,7 @@ class TestDependencyTreeCompatibilityIssues:
 
     def test_all_permissive_no_issues(self) -> None:
         """Test all permissive licenses returns no issues."""
-        root1 = DependencyNode(
-            name="mit-pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root1 = DependencyNode(name="mit-pkg", version="1.0.0", depth=0, license="MIT")
         root2 = DependencyNode(
             name="apache-pkg", version="1.0.0", depth=0, license="Apache-2.0"
         )
@@ -1192,9 +1179,7 @@ class TestDependencyTreeCompatibilityIssues:
         # MIT + GPL-3.0 = compatible (MIT can be in GPL)
         # Apache + GPL-2.0 = compatible
         # Apache + GPL-3.0 = compatible
-        root1 = DependencyNode(
-            name="mit-pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root1 = DependencyNode(name="mit-pkg", version="1.0.0", depth=0, license="MIT")
         root2 = DependencyNode(
             name="gpl2-pkg", version="1.0.0", depth=0, license="GPL-2.0"
         )
@@ -1214,8 +1199,11 @@ class TestDependencyTreeCompatibilityIssues:
             name="gpl3-child", version="1.0.0", depth=1, license="GPL-3.0"
         )
         root = DependencyNode(
-            name="gpl2-root", version="1.0.0", depth=0, license="GPL-2.0",
-            children=[child]
+            name="gpl2-root",
+            version="1.0.0",
+            depth=0,
+            license="GPL-2.0",
+            children=[child],
         )
         tree = DependencyTree(roots=[root])
 
@@ -1225,9 +1213,7 @@ class TestDependencyTreeCompatibilityIssues:
 
     def test_unknown_license_reported(self) -> None:
         """Test unknown license is reported as unknown compatibility."""
-        root1 = DependencyNode(
-            name="mit-pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root1 = DependencyNode(name="mit-pkg", version="1.0.0", depth=0, license="MIT")
         root2 = DependencyNode(
             name="custom-pkg", version="1.0.0", depth=0, license="Custom-License"
         )
@@ -1239,9 +1225,7 @@ class TestDependencyTreeCompatibilityIssues:
 
     def test_none_licenses_skipped(self) -> None:
         """Test None licenses are filtered out before checking."""
-        root1 = DependencyNode(
-            name="mit-pkg", version="1.0.0", depth=0, license="MIT"
-        )
+        root1 = DependencyNode(name="mit-pkg", version="1.0.0", depth=0, license="MIT")
         root2 = DependencyNode(
             name="no-license-pkg", version="1.0.0", depth=0, license=None
         )
@@ -1468,8 +1452,7 @@ class TestCompatibilityMatrixFromDependencyTree:
 
         # Should only have one issue for GPL-2.0/GPL-3.0 pair, not two
         incompatible_issues = [
-            i for i in matrix.issues
-            if i.status == CompatibilityStatus.INCOMPATIBLE
+            i for i in matrix.issues if i.status == CompatibilityStatus.INCOMPATIBLE
         ]
         assert len(incompatible_issues) == 1
 

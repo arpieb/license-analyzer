@@ -1,4 +1,5 @@
 """Tests for package filtering functionality."""
+
 from license_analyzer.analysis.filtering import FilterResult, filter_ignored_packages
 from license_analyzer.models.config import AnalyzerConfig
 from license_analyzer.models.scan import PackageLicense

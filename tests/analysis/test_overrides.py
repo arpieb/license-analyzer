@@ -1,4 +1,5 @@
 """Tests for license override functionality."""
+
 from license_analyzer.analysis.overrides import (
     apply_license_overrides,
     apply_overrides_to_tree,

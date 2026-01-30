@@ -1,4 +1,5 @@
 """Tests for problematic license detection."""
+
 from license_analyzer.analysis.problematic import (
     PROBLEMATIC_LICENSES,
     LicenseCategory,

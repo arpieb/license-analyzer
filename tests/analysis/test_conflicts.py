@@ -1,4 +1,5 @@
 """Tests for source conflict detection (FR12)."""
+
 import pytest
 from pydantic import ValidationError
 
@@ -98,9 +99,7 @@ class TestConflictDetector:
     # AC #1: Conflict detection tests (FR12)
     # ==========================================================================
 
-    def test_detects_pypi_vs_license_conflict(
-        self, detector: ConflictDetector
-    ) -> None:
+    def test_detects_pypi_vs_license_conflict(self, detector: ConflictDetector) -> None:
         """Test conflict when PyPI says MIT but LICENSE says Apache-2.0 (AC #1)."""
         result = detector.detect(
             pypi_license="MIT",
@@ -115,9 +114,7 @@ class TestConflictDetector:
         assert len(result.detected_licenses) == 2
         assert result.primary_license is None
 
-    def test_detects_three_way_conflict(
-        self, detector: ConflictDetector
-    ) -> None:
+    def test_detects_three_way_conflict(self, detector: ConflictDetector) -> None:
         """Test conflict with three different licenses."""
         result = detector.detect(
             pypi_license="MIT",
@@ -130,9 +127,7 @@ class TestConflictDetector:
         assert len(result.detected_licenses) == 3
         assert result.primary_license is None
 
-    def test_detects_partial_conflict(
-        self, detector: ConflictDetector
-    ) -> None:
+    def test_detects_partial_conflict(self, detector: ConflictDetector) -> None:
         """Test conflict when two sources agree but one disagrees."""
         result = detector.detect(
             pypi_license="MIT",
@@ -149,9 +144,7 @@ class TestConflictDetector:
     # AC #2: No conflict tests
     # ==========================================================================
 
-    def test_no_conflict_when_sources_agree(
-        self, detector: ConflictDetector
-    ) -> None:
+    def test_no_conflict_when_sources_agree(self, detector: ConflictDetector) -> None:
         """Test no conflict when all sources agree (AC #2)."""
         result = detector.detect(
             pypi_license="MIT",
@@ -176,9 +169,7 @@ class TestConflictDetector:
         assert result.primary_license == "APACHE-2.0"
         assert len(result.sources) == 3
 
-    def test_no_conflict_single_source(
-        self, detector: ConflictDetector
-    ) -> None:
+    def test_no_conflict_single_source(self, detector: ConflictDetector) -> None:
         """Test no conflict with single source."""
         result = detector.detect(pypi_license="MIT")
 
@@ -187,9 +178,7 @@ class TestConflictDetector:
         assert len(result.sources) == 1
         assert result.sources["PyPI"] == "MIT"
 
-    def test_no_sources_returns_empty_result(
-        self, detector: ConflictDetector
-    ) -> None:
+    def test_no_sources_returns_empty_result(self, detector: ConflictDetector) -> None:
         """Test empty result when no sources provided."""
         result = detector.detect()
 
@@ -262,9 +251,7 @@ class TestConflictDetector:
         assert len(result.sources) == 1
         assert "PyPI" in result.sources
 
-    def test_none_values_treated_as_no_source(
-        self, detector: ConflictDetector
-    ) -> None:
+    def test_none_values_treated_as_no_source(self, detector: ConflictDetector) -> None:
         """Test that None values are treated as no source."""
         result = detector.detect(
             pypi_license="MIT",

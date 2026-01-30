@@ -1,4 +1,5 @@
 """License override functionality for manual license corrections."""
+
 from __future__ import annotations
 
 from license_analyzer.models.config import AnalyzerConfig

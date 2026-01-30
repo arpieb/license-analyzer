@@ -1,4 +1,5 @@
 """Pydantic data models for license-analyzer."""
+
 from license_analyzer.models.dependency import (
     CategoryStatistics,
     CircularReference,

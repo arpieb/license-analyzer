@@ -1,4 +1,5 @@
 """Tests for license compatibility checking."""
+
 from license_analyzer.analysis.compatibility import (
     check_all_compatibility,
     check_license_compatibility,

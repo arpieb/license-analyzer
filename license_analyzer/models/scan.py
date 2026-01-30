@@ -1,8 +1,9 @@
 """Scan-related Pydantic models."""
+
 from __future__ import annotations
 
 from enum import Enum
-from typing import TYPE_CHECKING, List, Literal, Optional
+from typing import TYPE_CHECKING, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -47,7 +48,7 @@ class IgnoredPackagesSummary(BaseModel):
         default=0,
         description="Number of packages that were ignored",
     )
-    ignored_names: Optional[List[str]] = Field(
+    ignored_names: Optional[list[str]] = Field(
         default=None,
         description="Names of packages that were ignored",
     )

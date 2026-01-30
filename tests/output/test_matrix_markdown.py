@@ -1,4 +1,5 @@
 """Tests for Markdown matrix formatter."""
+
 from license_analyzer.models.dependency import (
     CompatibilityMatrix,
     CompatibilityResult,

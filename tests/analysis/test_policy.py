@@ -1,4 +1,5 @@
 """Tests for license policy checker."""
+
 from license_analyzer.analysis.overrides import apply_license_overrides
 from license_analyzer.analysis.policy import check_allowed_licenses
 from license_analyzer.models.config import AnalyzerConfig, LicenseOverride
@@ -27,9 +28,7 @@ class TestCheckAllowedLicenses:
             PackageLicense(name="requests", version="2.28.0", license="Apache-2.0"),
             PackageLicense(name="pydantic", version="2.0.0", license="MIT"),
         ]
-        config = AnalyzerConfig(
-            allowed_licenses=["MIT", "Apache-2.0", "BSD-3-Clause"]
-        )
+        config = AnalyzerConfig(allowed_licenses=["MIT", "Apache-2.0", "BSD-3-Clause"])
 
         violations = check_allowed_licenses(packages, config)
 

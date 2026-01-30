@@ -1,4 +1,5 @@
 """Markdown matrix formatter for license compatibility visualization."""
+
 from license_analyzer.models.dependency import (
     CompatibilityMatrix,
     CompatibilityStatus,
@@ -82,12 +83,12 @@ class MatrixMarkdownFormatter:
             List of Markdown lines for summary.
         """
         incompatible_count = sum(
-            1 for issue in matrix.issues
+            1
+            for issue in matrix.issues
             if issue.status == CompatibilityStatus.INCOMPATIBLE
         )
         unknown_count = sum(
-            1 for issue in matrix.issues
-            if issue.status == CompatibilityStatus.UNKNOWN
+            1 for issue in matrix.issues if issue.status == CompatibilityStatus.UNKNOWN
         )
 
         status = "passing" if incompatible_count == 0 else "failing"

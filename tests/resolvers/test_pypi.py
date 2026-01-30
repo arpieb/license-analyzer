@@ -1,4 +1,5 @@
 """Tests for PyPI resolver."""
+
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
