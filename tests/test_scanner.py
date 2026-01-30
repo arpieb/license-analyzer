@@ -7,8 +7,14 @@ import pytest
 from rich.console import Console
 
 from license_analyzer.exceptions import NetworkError
+from license_analyzer.models.dependency import DependencyNode, DependencyTree
 from license_analyzer.models.scan import PackageLicense
-from license_analyzer.scanner import discover_packages, resolve_licenses
+from license_analyzer.scanner import (
+    attach_licenses_to_tree,
+    discover_packages,
+    resolve_dependency_tree,
+    resolve_licenses,
+)
 
 
 class TestDiscoverPackages:
@@ -472,3 +478,394 @@ class TestResolveLicenses:
         assert result[0].license is None
         # GitHub resolver should NOT be called since no metadata
         mock_github_resolver.resolve.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_readme_fallback_when_github_has_no_license(self) -> None:
+        """Test that README resolver is used when both PyPI and GitHub return None."""
+        packages = [
+            PackageLicense(name="readme-pkg", version="1.0.0", license=None),
+        ]
+
+        # PyPI has no license but has GitHub URL
+        pypi_metadata = {
+            "info": {
+                "license": None,
+                "project_urls": {"Repository": "https://github.com/owner/repo"},
+            }
+        }
+
+        async def mock_fetch(
+            name: str, client: Any = None
+        ) -> Optional[dict[str, Any]]:
+            return pypi_metadata
+
+        # Mock GitHub resolver to return None (no LICENSE file found)
+        mock_github_resolver = AsyncMock()
+        mock_github_resolver.resolve.return_value = None
+
+        # Mock README resolver to return MIT (from README mention)
+        mock_readme_resolver = AsyncMock()
+        mock_readme_resolver.resolve.return_value = "MIT"
+
+        with (
+            patch(
+                "license_analyzer.scanner.fetch_pypi_metadata",
+                side_effect=mock_fetch,
+            ),
+            patch(
+                "license_analyzer.scanner.GitHubLicenseResolver",
+                return_value=mock_github_resolver,
+            ),
+            patch(
+                "license_analyzer.scanner.ReadmeLicenseResolver",
+                return_value=mock_readme_resolver,
+            ),
+        ):
+            result = await resolve_licenses(packages)
+
+        assert len(result) == 1
+        assert result[0].license == "MIT"
+        # Both resolvers should be called
+        mock_github_resolver.resolve.assert_called_once()
+        mock_readme_resolver.resolve.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_readme_not_called_when_github_found_license(self) -> None:
+        """Test that README resolver is NOT called when GitHub already found license."""
+        packages = [
+            PackageLicense(name="github-pkg", version="1.0.0", license=None),
+        ]
+
+        # PyPI has no license but has GitHub URL
+        pypi_metadata = {
+            "info": {
+                "license": None,
+                "project_urls": {"Repository": "https://github.com/owner/repo"},
+            }
+        }
+
+        async def mock_fetch(
+            name: str, client: Any = None
+        ) -> Optional[dict[str, Any]]:
+            return pypi_metadata
+
+        # Mock GitHub resolver to return Apache-2.0
+        mock_github_resolver = AsyncMock()
+        mock_github_resolver.resolve.return_value = "Apache-2.0"
+
+        # Mock README resolver (should NOT be called)
+        mock_readme_resolver = AsyncMock()
+        mock_readme_resolver.resolve.return_value = "MIT"
+
+        with (
+            patch(
+                "license_analyzer.scanner.fetch_pypi_metadata",
+                side_effect=mock_fetch,
+            ),
+            patch(
+                "license_analyzer.scanner.GitHubLicenseResolver",
+                return_value=mock_github_resolver,
+            ),
+            patch(
+                "license_analyzer.scanner.ReadmeLicenseResolver",
+                return_value=mock_readme_resolver,
+            ),
+        ):
+            result = await resolve_licenses(packages)
+
+        assert len(result) == 1
+        assert result[0].license == "Apache-2.0"
+        # GitHub was called, README should NOT be called
+        mock_github_resolver.resolve.assert_called_once()
+        mock_readme_resolver.resolve.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_readme_not_called_when_no_metadata(self) -> None:
+        """Test that README resolver is not called when PyPI returns no metadata."""
+        packages = [
+            PackageLicense(name="no-pypi-pkg", version="1.0.0", license=None),
+        ]
+
+        async def mock_fetch(
+            name: str, client: Any = None
+        ) -> Optional[dict[str, Any]]:
+            return None  # Package not on PyPI
+
+        # Mock resolvers
+        mock_github_resolver = AsyncMock()
+        mock_readme_resolver = AsyncMock()
+
+        with (
+            patch(
+                "license_analyzer.scanner.fetch_pypi_metadata",
+                side_effect=mock_fetch,
+            ),
+            patch(
+                "license_analyzer.scanner.GitHubLicenseResolver",
+                return_value=mock_github_resolver,
+            ),
+            patch(
+                "license_analyzer.scanner.ReadmeLicenseResolver",
+                return_value=mock_readme_resolver,
+            ),
+        ):
+            result = await resolve_licenses(packages)
+
+        assert len(result) == 1
+        assert result[0].license is None
+        # Neither resolver should be called since no metadata
+        mock_github_resolver.resolve.assert_not_called()
+        mock_readme_resolver.resolve.assert_not_called()
+
+
+class MockDistribution:
+    """Mock distribution for testing dependency resolution."""
+
+    def __init__(
+        self,
+        name: str,
+        version: str,
+        requires: Optional[list[str]] = None,
+    ) -> None:
+        """Initialize mock distribution."""
+        self._metadata = {"Name": name, "Version": version}
+        self._requires = requires
+
+    @property
+    def metadata(self) -> dict[str, str]:
+        """Return metadata dict."""
+        return self._metadata
+
+    def get(self, key: str, default: Optional[str] = None) -> Optional[str]:
+        """Get metadata value."""
+        return self._metadata.get(key, default)
+
+    @property
+    def requires(self) -> Optional[list[str]]:
+        """Return requirements list."""
+        return self._requires
+
+
+def create_mock_distributions(
+    packages: dict[str, tuple[str, Optional[list[str]]]]
+) -> list[MockDistribution]:
+    """Create list of mock distributions for testing."""
+    return [
+        MockDistribution(name, version, requires)
+        for name, (version, requires) in packages.items()
+    ]
+
+
+class TestResolveDependencyTree:
+    """Tests for resolve_dependency_tree function."""
+
+    def test_resolves_single_package(self) -> None:
+        """Test resolving dependency tree for single package."""
+        mock_dists = create_mock_distributions({
+            "requests": ("2.31.0", []),
+        })
+
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
+            tree = resolve_dependency_tree(["requests"])
+
+        assert len(tree.roots) == 1
+        assert tree.roots[0].name == "requests"
+        assert tree.roots[0].version == "2.31.0"
+        assert tree.roots[0].depth == 0
+
+    def test_resolves_transitive_dependencies(self) -> None:
+        """Test resolving transitive dependencies."""
+        mock_dists = create_mock_distributions({
+            "requests": ("2.31.0", ["certifi>=2017.4.17"]),
+            "certifi": ("2023.7.22", []),
+        })
+
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
+            tree = resolve_dependency_tree(["requests"])
+
+        assert len(tree.roots) == 1
+        assert len(tree.roots[0].children) == 1
+        assert tree.roots[0].children[0].name == "certifi"
+        assert tree.roots[0].children[0].depth == 1
+
+    def test_respects_max_depth(self) -> None:
+        """Test that max_depth limits traversal."""
+        mock_dists = create_mock_distributions({
+            "A": ("1.0.0", ["B>=1.0"]),
+            "B": ("1.0.0", ["C>=1.0"]),
+            "C": ("1.0.0", []),
+        })
+
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
+            tree = resolve_dependency_tree(["A"], max_depth=1)
+
+        # Should have A and B, but not C (depth 2)
+        all_nodes = tree.get_all_nodes()
+        names = [n.name for n in all_nodes]
+        assert "A" in names
+        assert "B" in names
+        assert "C" not in names
+
+    def test_license_is_none_by_default(self) -> None:
+        """Test that license field is None (populated separately)."""
+        mock_dists = create_mock_distributions({
+            "requests": ("2.31.0", []),
+        })
+
+        with patch(
+            "license_analyzer.resolvers.dependency.distributions",
+            return_value=mock_dists,
+        ):
+            tree = resolve_dependency_tree(["requests"])
+
+        assert tree.roots[0].license is None
+
+
+class TestAttachLicensesToTree:
+    """Tests for attach_licenses_to_tree function."""
+
+    @pytest.mark.asyncio
+    async def test_attaches_licenses_to_nodes(self) -> None:
+        """Test that licenses are attached to tree nodes."""
+        # Create a simple tree
+        child = DependencyNode(
+            name="certifi",
+            version="2023.7.22",
+            depth=1,
+            license=None,
+            children=[],
+        )
+        root = DependencyNode(
+            name="requests",
+            version="2.31.0",
+            depth=0,
+            license=None,
+            children=[child],
+        )
+        tree = DependencyTree(roots=[root])
+
+        # Mock resolve_licenses to return licenses
+        async def mock_resolve(
+            packages: list[PackageLicense],
+            console: Optional[Console] = None,
+            show_progress: bool = True,
+        ) -> list[PackageLicense]:
+            return [
+                PackageLicense(name="certifi", version="2023.7.22", license="MPL-2.0"),
+                PackageLicense(name="requests", version="2.31.0", license="Apache-2.0"),
+            ]
+
+        with patch(
+            "license_analyzer.scanner.resolve_licenses",
+            side_effect=mock_resolve,
+        ):
+            result = await attach_licenses_to_tree(tree)
+
+        # Verify licenses are attached
+        assert result.roots[0].license == "Apache-2.0"
+        assert result.roots[0].children[0].license == "MPL-2.0"
+
+    @pytest.mark.asyncio
+    async def test_preserves_tree_structure(self) -> None:
+        """Test that tree structure is preserved when attaching licenses."""
+        grandchild = DependencyNode(
+            name="idna", version="3.4", depth=2, license=None, children=[]
+        )
+        child = DependencyNode(
+            name="urllib3", version="2.0.0", depth=1, license=None, children=[grandchild]
+        )
+        root = DependencyNode(
+            name="requests", version="2.31.0", depth=0, license=None, children=[child]
+        )
+        tree = DependencyTree(roots=[root])
+
+        # Mock resolve_licenses
+        async def mock_resolve(
+            packages: list[PackageLicense],
+            console: Optional[Console] = None,
+            show_progress: bool = True,
+        ) -> list[PackageLicense]:
+            return [
+                PackageLicense(name="idna", version="3.4", license="BSD-3-Clause"),
+                PackageLicense(name="requests", version="2.31.0", license="Apache-2.0"),
+                PackageLicense(name="urllib3", version="2.0.0", license="MIT"),
+            ]
+
+        with patch(
+            "license_analyzer.scanner.resolve_licenses",
+            side_effect=mock_resolve,
+        ):
+            result = await attach_licenses_to_tree(tree)
+
+        # Verify structure preserved
+        assert len(result.roots) == 1
+        assert result.roots[0].name == "requests"
+        assert result.roots[0].depth == 0
+        assert len(result.roots[0].children) == 1
+        assert result.roots[0].children[0].name == "urllib3"
+        assert result.roots[0].children[0].depth == 1
+        assert len(result.roots[0].children[0].children) == 1
+        assert result.roots[0].children[0].children[0].name == "idna"
+        assert result.roots[0].children[0].children[0].depth == 2
+
+        # Verify licenses
+        assert result.roots[0].license == "Apache-2.0"
+        assert result.roots[0].children[0].license == "MIT"
+        assert result.roots[0].children[0].children[0].license == "BSD-3-Clause"
+
+    @pytest.mark.asyncio
+    async def test_handles_none_licenses(self) -> None:
+        """Test that None licenses are handled correctly."""
+        root = DependencyNode(
+            name="unknown-pkg", version="1.0.0", depth=0, license=None, children=[]
+        )
+        tree = DependencyTree(roots=[root])
+
+        # Mock resolve_licenses to return None license
+        async def mock_resolve(
+            packages: list[PackageLicense],
+            console: Optional[Console] = None,
+            show_progress: bool = True,
+        ) -> list[PackageLicense]:
+            return [
+                PackageLicense(name="unknown-pkg", version="1.0.0", license=None),
+            ]
+
+        with patch(
+            "license_analyzer.scanner.resolve_licenses",
+            side_effect=mock_resolve,
+        ):
+            result = await attach_licenses_to_tree(tree)
+
+        assert result.roots[0].license is None
+
+    @pytest.mark.asyncio
+    async def test_handles_empty_tree(self) -> None:
+        """Test that empty tree is handled correctly."""
+        tree = DependencyTree(roots=[])
+
+        # Mock resolve_licenses (should be called with empty list)
+        async def mock_resolve(
+            packages: list[PackageLicense],
+            console: Optional[Console] = None,
+            show_progress: bool = True,
+        ) -> list[PackageLicense]:
+            return []
+
+        with patch(
+            "license_analyzer.scanner.resolve_licenses",
+            side_effect=mock_resolve,
+        ):
+            result = await attach_licenses_to_tree(tree)
+
+        assert result.roots == []
+        assert result.total_count == 0

@@ -3,6 +3,10 @@ from typing import Any, Optional
 
 import httpx
 
+from license_analyzer.analysis.modified import (
+    ModifiedLicenseDetector,
+    ModifiedLicenseResult,
+)
 from license_analyzer.resolvers.base import BaseResolver
 
 # Common LICENSE file names to try
@@ -24,15 +28,32 @@ class GitHubLicenseResolver(BaseResolver):
         self,
         pypi_metadata: Optional[dict[str, Any]] = None,
         client: Optional[httpx.AsyncClient] = None,
+        detect_modified: bool = False,
     ) -> None:
         """Initialize with optional PyPI metadata and HTTP client.
 
         Args:
             pypi_metadata: PyPI JSON API response data containing repo URLs.
             client: Optional shared httpx.AsyncClient for connection reuse.
+            detect_modified: Whether to run modified license detection.
         """
         self._pypi_metadata = pypi_metadata
         self._client = client
+        self._detect_modified = detect_modified
+        self._modification_result: Optional[ModifiedLicenseResult] = None
+        self._detector: Optional[ModifiedLicenseDetector] = None
+        if detect_modified:
+            self._detector = ModifiedLicenseDetector()
+
+    @property
+    def modification_result(self) -> Optional[ModifiedLicenseResult]:
+        """Get the last modification detection result.
+
+        Returns:
+            ModifiedLicenseResult from last resolve() call, or None if
+            detect_modified=False or resolve() hasn't been called.
+        """
+        return self._modification_result
 
     async def resolve(self, package_name: str, version: str) -> Optional[str]:
         """Resolve license from GitHub LICENSE file.
@@ -45,6 +66,9 @@ class GitHubLicenseResolver(BaseResolver):
             SPDX license identifier (e.g., "MIT", "Apache-2.0"),
             or None if license cannot be determined.
         """
+        # Reset modification result for this resolve call
+        self._modification_result = None
+
         repo_url = self._extract_github_url()
         if not repo_url:
             return None
@@ -53,7 +77,15 @@ class GitHubLicenseResolver(BaseResolver):
         if not license_content:
             return None
 
-        return self._identify_license(license_content)
+        license_id = self._identify_license(license_content)
+
+        # Run modified license detection if enabled
+        if self._detect_modified and self._detector and license_content:
+            self._modification_result = self._detector.detect(
+                license_content, claimed_license=license_id
+            )
+
+        return license_id
 
     def _extract_github_url(self) -> Optional[str]:
         """Extract GitHub repository URL from PyPI metadata.
@@ -181,8 +213,10 @@ class GitHubLicenseResolver(BaseResolver):
         if "gnu lesser general public license" in content_lower:
             if "version 3" in content_lower:
                 return "LGPL-3.0"
+            if "version 2.1" in content_lower:
+                return "LGPL-2.1"
             if "version 2" in content_lower:
-                return "LGPL-2.0"
+                return "LGPL-2.1"  # Default to 2.1 for v2 family
 
         # BSD detection
         if "bsd" in content_lower:

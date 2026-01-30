@@ -328,12 +328,12 @@ modification, are permitted provided that the following conditions are met:
         result = resolver._identify_license(lgpl3_content)
         assert result == "LGPL-3.0"
 
-    def test_identify_lgpl2_license(self) -> None:
-        """Test identifying LGPL-2.0 license."""
+    def test_identify_lgpl21_license(self) -> None:
+        """Test identifying LGPL-2.1 license."""
         resolver = GitHubLicenseResolver(pypi_metadata=None)
-        lgpl2_content = "GNU Lesser General Public License Version 2.1, February 1999"
-        result = resolver._identify_license(lgpl2_content)
-        assert result == "LGPL-2.0"
+        lgpl21_content = "GNU Lesser General Public License Version 2.1, February 1999"
+        result = resolver._identify_license(lgpl21_content)
+        assert result == "LGPL-2.1"
 
     def test_identify_unlicense(self) -> None:
         """Test identifying Unlicense."""
@@ -435,3 +435,48 @@ modification, are permitted provided that the following conditions are met:
         """Test BRANCHES constant contains expected values."""
         assert "main" in BRANCHES
         assert "master" in BRANCHES
+
+    # Modified license detection integration tests
+    @pytest.mark.asyncio
+    async def test_resolve_with_modified_detection_enabled(
+        self, pypi_metadata_with_github: dict[str, Any], mit_license_content: str
+    ) -> None:
+        """Test resolve runs modified detection when enabled."""
+        resolver = GitHubLicenseResolver(
+            pypi_metadata=pypi_metadata_with_github, detect_modified=True
+        )
+
+        with patch.object(
+            resolver, "_fetch_license_file", return_value=mit_license_content
+        ):
+            license_id = await resolver.resolve("example-pkg", "1.0.0")
+
+        assert license_id == "MIT"
+        # modification_result should be populated
+        assert resolver.modification_result is not None
+        assert resolver.modification_result.closest_license == "MIT"
+        assert resolver.modification_result.is_modified is False
+        assert resolver.modification_result.similarity_score >= 0.90
+
+    @pytest.mark.asyncio
+    async def test_resolve_without_modified_detection(
+        self, pypi_metadata_with_github: dict[str, Any], mit_license_content: str
+    ) -> None:
+        """Test resolve does not run modified detection when disabled (default)."""
+        resolver = GitHubLicenseResolver(pypi_metadata=pypi_metadata_with_github)
+
+        with patch.object(
+            resolver, "_fetch_license_file", return_value=mit_license_content
+        ):
+            license_id = await resolver.resolve("example-pkg", "1.0.0")
+
+        assert license_id == "MIT"
+        # modification_result should be None when detection is disabled
+        assert resolver.modification_result is None
+
+    def test_modification_result_property_initially_none(self) -> None:
+        """Test modification_result is None before resolve is called."""
+        resolver = GitHubLicenseResolver(
+            pypi_metadata=None, detect_modified=True
+        )
+        assert resolver.modification_result is None

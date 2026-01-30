@@ -8,12 +8,15 @@ from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
 from license_analyzer.exceptions import NetworkError
+from license_analyzer.models.dependency import DependencyNode, DependencyTree
 from license_analyzer.models.scan import PackageLicense
+from license_analyzer.resolvers.dependency import DependencyResolver
 from license_analyzer.resolvers.github import GitHubLicenseResolver
 from license_analyzer.resolvers.pypi import (
     extract_license_from_metadata,
     fetch_pypi_metadata,
 )
+from license_analyzer.resolvers.readme import ReadmeLicenseResolver
 
 # Rate limiting for concurrent HTTP requests (per architecture.md)
 MAX_CONCURRENT_REQUESTS = 10
@@ -58,6 +61,7 @@ async def resolve_licenses(
     Resolution order:
     1. PyPI metadata (license field and classifiers)
     2. GitHub LICENSE file (if PyPI returns None and repo URL available)
+    3. README license mention (if PyPI and GitHub LICENSE return None)
 
     Args:
         packages: List of packages to resolve licenses for.
@@ -94,6 +98,13 @@ async def resolve_licenses(
                     pypi_metadata=metadata, client=client
                 )
                 license_id = await github_resolver.resolve(pkg.name, pkg.version)
+
+            # If GitHub LICENSE doesn't have license, try README mentions
+            if license_id is None and metadata is not None:
+                readme_resolver = ReadmeLicenseResolver(
+                    pypi_metadata=metadata, client=client
+                )
+                license_id = await readme_resolver.resolve(pkg.name, pkg.version)
 
             return PackageLicense(
                 name=pkg.name,
@@ -173,3 +184,74 @@ async def resolve_licenses(
 
         # Sort by name for deterministic output (NFR13)
         return sorted(resolved_list, key=lambda p: p.name.lower())
+
+
+def resolve_dependency_tree(
+    direct_packages: list[str],
+    max_depth: Optional[int] = None,
+) -> DependencyTree:
+    """Resolve complete dependency tree for given packages (FR7).
+
+    Builds a tree structure showing all transitive dependencies with their
+    depth levels. License information is NOT populated by this function -
+    use attach_licenses_to_tree() separately if needed.
+
+    Args:
+        direct_packages: List of direct dependency package names.
+        max_depth: Maximum traversal depth (None for unlimited).
+
+    Returns:
+        DependencyTree with all dependencies and depth tracking.
+    """
+    resolver = DependencyResolver()
+    return resolver.resolve_tree(direct_packages, max_depth=max_depth)
+
+
+async def attach_licenses_to_tree(
+    tree: DependencyTree,
+    console: Optional[Console] = None,
+    show_progress: bool = True,
+) -> DependencyTree:
+    """Attach license information to all nodes in a dependency tree.
+
+    This function resolves licenses for all nodes and creates a new tree
+    with license information populated.
+
+    Args:
+        tree: DependencyTree to resolve licenses for.
+        console: Optional Rich Console for progress display.
+        show_progress: Whether to show progress indicator (default: True).
+
+    Returns:
+        New DependencyTree with license fields populated.
+    """
+    # Get all nodes and resolve their licenses
+    all_nodes = tree.get_all_nodes()
+    packages = [
+        PackageLicense(name=node.name, version=node.version, license=None)
+        for node in all_nodes
+    ]
+
+    # Resolve licenses using existing infrastructure
+    resolved = await resolve_licenses(packages, console, show_progress)
+
+    # Build lookup table for resolved licenses
+    license_lookup: dict[str, Optional[str]] = {
+        pkg.name.lower(): pkg.license for pkg in resolved
+    }
+
+    # Recursively rebuild tree with licenses attached
+    def attach_license(node: DependencyNode) -> DependencyNode:
+        """Attach license to node and all children."""
+        license_id = license_lookup.get(node.name.lower())
+        children_with_licenses = [attach_license(child) for child in node.children]
+        return DependencyNode(
+            name=node.name,
+            version=node.version,
+            depth=node.depth,
+            license=license_id,
+            children=children_with_licenses,
+        )
+
+    new_roots = [attach_license(root) for root in tree.roots]
+    return DependencyTree(roots=new_roots)
