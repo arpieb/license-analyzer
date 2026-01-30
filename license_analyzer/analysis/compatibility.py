@@ -6,7 +6,7 @@ Uses the license-expression library for accurate SPDX parsing and normalization.
 
 from typing import Optional
 
-from license_expression import (  # type: ignore[import-untyped]
+from license_expression import (
     ExpressionError,
     get_spdx_licensing,
 )

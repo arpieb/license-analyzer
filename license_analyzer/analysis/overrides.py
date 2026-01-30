@@ -72,12 +72,15 @@ def apply_overrides_to_tree(
     if not config.overrides:
         return tree
 
+    # Store in local variable so mypy knows it's not None
+    overrides = config.overrides
+
     def apply_to_node(node: DependencyNode) -> DependencyNode:
         """Recursively apply overrides to a node and its children."""
         # Check if this node has an override
         new_license = node.license
-        if node.name in config.overrides:
-            new_license = config.overrides[node.name].license
+        if node.name in overrides:
+            new_license = overrides[node.name].license
 
         # Recursively process children
         new_children = [apply_to_node(child) for child in node.children]
